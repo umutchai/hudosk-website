@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faaliyet Detayları - HÜDDOSK</title>
+    <link rel="icon" href="/favicon.jpg" type="image/jpeg">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+        
+        .activity-header {
+            background: linear-gradient(135deg, #704ca3 0%, #8b6bc0 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .activity-content {
+            padding: 3rem 0;
+        }
+        
+        .activity-meta {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .meta-item i {
+            width: 30px;
+            color: #704ca3;
+            margin-right: 1rem;
+        }
+        
+        .rich-content {
+            line-height: 1.8;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .rich-content h1, .rich-content h2, .rich-content h3, .rich-content h4, .rich-content h5, .rich-content h6 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        
+        .rich-content p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .rich-content ul, .rich-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        
+        .rich-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .rich-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .rich-content blockquote {
+            border-left: 4px solid #704ca3;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #666;
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .rich-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .rich-content table th, .rich-content table td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        
+        .rich-content table th {
+            background-color: #704ca3;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .photo-gallery {
+            margin: 2rem 0;
+        }
+        
+        .photo-item {
+            margin-bottom: 1.5rem;
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-item img:hover {
+            transform: scale(1.02);
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            border-bottom: 3px solid #704ca3;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .badge-difficulty {
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        /* PDF Format Styling */
+        .report-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .report-header {
+            background: linear-gradient(135deg, #704ca3 0%, #8b6bc0 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .report-header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .report-header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .report-body {
+            padding: 2rem;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-item i {
+            width: 30px;
+            color: #704ca3;
+            margin-right: 1rem;
+        }
+        
+        .info-item .label {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+        }
+        
+        .info-item .value {
+            color: #666;
+        }
+        
+        .content-section {
+            margin-bottom: 3rem;
+        }
+        
+        .content-section h3 {
+            color: #704ca3;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #704ca3;
+            padding-bottom: 0.5rem;
+        }
+        
+        .photo-section {
+            margin: 2rem 0;
+        }
+        
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .photo-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .photo-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .photo-card .caption {
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .back-button {
+                position: static;
+                margin-bottom: 1rem;
+            }
+            
+            .report-header h1 {
+                font-size: 2rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .photo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4" href="/">
+                <img src="/images/HuddoskLogo_page-0001.jpg" alt="HÜDDOSK" style="height: 36px; width: auto; border-radius: 4px;" />
+                <span>HÜDDOSK</span>
+                <span class="d-none d-lg-inline ms-2 fw-normal" style="font-size: 0.9rem;">Hacettepe Üniversitesi Dağcılık ve Doğa Sporları Kulübü</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Ana Sayfa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/faaliyet-raporlari">
+                            <i class="fas fa-clipboard-list me-1"></i>Faaliyet Raporları
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/egitim-programlari">
+                            <i class="fas fa-graduation-cap me-1"></i>HÜDDOSK Eğitim Planı
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tuzuk">
+                            <i class="fas fa-file-alt me-1"></i>Tüzük
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Back Button -->
+    <div class="back-button">
+        <a href="/faaliyet-raporlari" class="btn btn-outline-success">
+            <i class="fas fa-arrow-left me-2"></i>Geri Dön
+        </a>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="loading-spinner">
+        <div class="text-center">
+            <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Yükleniyor...</span>
+            </div>
+            <p class="mt-3 text-muted">Faaliyet raporu yükleniyor...</p>
+        </div>
+    </div>
+
+    <!-- Activity Content -->
+    <div id="activityContent" style="display: none;">
+        <div class="report-container">
+            <!-- Report Header -->
+            <div class="report-header">
+                <h1 id="activityTitle">Faaliyet Başlığı</h1>
+                <p class="subtitle" id="activitySubtitle">Faaliyet alt başlığı</p>
+            </div>
+
+            <!-- Report Body -->
+            <div class="report-body">
+                <!-- Basic Information -->
+                <div class="info-grid" id="activityMeta">
+                    <!-- Meta information will be loaded here -->
+                </div>
+
+                <!-- Pre-Activity Section -->
+                <div id="preActivitySection" style="display: none;">
+                    <div class="content-section">
+                        <h3>
+                            <i class="fas fa-play-circle me-2"></i>Faaliyet Öncesi
+                        </h3>
+                        <div class="rich-content" id="preActivityContent"></div>
+                    </div>
+                    
+                    <!-- Pre-Activity Photos -->
+                    <div id="preActivityPhotoSection" style="display: none;">
+                        <div class="photo-section">
+                            <h3>
+                                <i class="fas fa-camera me-2"></i>Faaliyet Öncesi Fotoğraflar
+                            </h3>
+                            <div class="photo-grid" id="preActivityPhotoGrid">
+                                <!-- Pre-activity photos will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report Section -->
+                <div id="reportSection" style="display: none;">
+                    <div class="content-section">
+                        <h3>
+                            <i class="fas fa-clipboard-list me-2"></i>Rapor
+                        </h3>
+                        <div class="rich-content" id="reportContent"></div>
+                    </div>
+                    
+                    <!-- Report Photos -->
+                    <div id="reportPhotoSection" style="display: none;">
+                        <div class="photo-section">
+                            <h3>
+                                <i class="fas fa-camera me-2"></i>Faaliyet Fotoğrafları
+                            </h3>
+                            <div class="photo-grid" id="reportPhotoGrid">
+                                <!-- Report photos will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Opinions Section -->
+                <div id="opinionsSection" style="display: none;">
+                    <div class="content-section">
+                        <h3>
+                            <i class="fas fa-comments me-2"></i>Görüşler
+                        </h3>
+                        <div class="rich-content" id="opinionsContent"></div>
+                    </div>
+                    
+                    <!-- Opinion Photos -->
+                    <div id="opinionPhotoSection" style="display: none;">
+                        <div class="photo-section">
+                            <h3>
+                                <i class="fas fa-camera me-2"></i>Görüş Fotoğrafları
+                            </h3>
+                            <div class="photo-grid" id="opinionPhotoGrid">
+                                <!-- Opinion photos will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="content-section">
+                    <div class="row">
+                <div class="col-md-12">
+                    <button class="btn btn-outline-success w-100" onclick="shareActivity()">
+                                <i class="fas fa-share-alt me-2"></i>Paylaş
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="text-center py-5" style="display: none;">
+        <div class="container">
+            <div class="text-danger">
+                <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                <h5>Bir hata oluştu</h5>
+                <p>Faaliyet raporu yüklenirken bir sorun oluştu.</p>
+                <button class="btn btn-success" onclick="loadActivityDetail()">
+                    <i class="fas fa-sync-alt me-2"></i>Tekrar Dene
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="mb-3 d-flex align-items-center justify-content-center gap-2">
+                        <img src="/images/HuddoskLogo_page-0001.jpg" alt="HÜDDOSK" style="height: 28px; width: auto; border-radius: 4px;" />
+                        <span>HÜDDOSK</span>
+                    </h5>
+                    <p class="mb-2">Doğa Sporları ve Tırmanış Topluluğu</p>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/huddosk/" target="_blank" rel="noopener noreferrer" class="text-white me-3">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <p class="small text-white-50 mt-3 mb-0">Huddosk’ta yayımlanan içerikler yalnızca kişisel kullanım amacıyla paylaşılabilir; ticari yayın organlarında izinsiz kullanımı yasaktır. İçeriklerin uygulanmasından doğabilecek risk ve zararlardan Huddosk sorumlu değildir.</p>
+                    <hr class="my-3">
+                    <p class="mb-0">&copy; 2025 HÜDDOSK. Tüm hakları saklıdır.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let currentActivityId = null;
+        let activityData = null;
+
+        // Load activity detail on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get activity ID from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            currentActivityId = urlParams.get('id');
+            
+            if (currentActivityId) {
+                loadActivityDetail();
+            } else {
+                showError('Faaliyet ID bulunamadı.');
+            }
+        });
+
+        // Load activity detail from API
+        async function loadActivityDetail() {
+            try {
+                showLoading();
+                
+                const response = await fetch(`/api/activities/${currentActivityId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    activityData = data.data;
+                    displayActivityDetail();
+                } else {
+                    showError('Faaliyet bulunamadı.');
+                }
+            } catch (error) {
+                console.error('Error loading activity detail:', error);
+                showError('Faaliyet detayları yüklenirken bir hata oluştu.');
+            }
+        }
+
+        // Display activity detail
+        function displayActivityDetail() {
+            if (!activityData) {
+                showError('Faaliyet verisi bulunamadı.');
+                return;
+            }
+
+            // Set page title
+            document.title = `${activityData.title} - HÜDDOSK`;
+            
+            // Set header content
+            document.getElementById('activityTitle').textContent = activityData.title;
+            document.getElementById('activitySubtitle').textContent = activityData.region || '';
+
+            // Display meta information
+            displayMetaInformation();
+
+            // Display content sections
+            displayContentSections();
+
+            hideLoading();
+            document.getElementById('activityContent').style.display = 'block';
+        }
+
+        // Display meta information
+        function displayMetaInformation() {
+            const metaContainer = document.getElementById('activityMeta');
+            
+            metaContainer.innerHTML = `
+                <div class="info-item">
+                    <i class="fas fa-calendar"></i>
+                    <div>
+                        <div class="label">Tarih</div>
+                        <div class="value">${activityData.activity_date ? new Date(activityData.activity_date).toLocaleDateString('tr-TR') : 'Belirtilmemiş'}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <div class="label">Bölge</div>
+                        <div class="value">${activityData.region || 'Belirtilmemiş'}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-route"></i>
+                    <div>
+                        <div class="label">Rota</div>
+                        <div class="value">${activityData.route || 'Belirtilmemiş'}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-users"></i>
+                    <div>
+                        <div class="label">Ekip</div>
+                        <div class="value">${activityData.team || 'Belirtilmemiş'}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-tools"></i>
+                    <div>
+                        <div class="label">Teknik Malzeme</div>
+                        <div class="value">${activityData.technical_equipment || 'Belirtilmemiş'}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-cloud-sun"></i>
+                    <div>
+                        <div class="label">Hava Durumu</div>
+                        <div class="value">${activityData.weather_conditions || 'Belirtilmemiş'}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-user-edit"></i>
+                    <div>
+                        <div class="label">Yazan</div>
+                        <div class="value">${activityData.report_writer || 'Belirtilmemiş'}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Display content sections
+        function displayContentSections() {
+            console.log('🔍 Activity Data:', activityData);
+            
+            // Pre-activity description with photos
+            if (activityData.pre_activity_description) {
+                document.getElementById('preActivityContent').innerHTML = activityData.pre_activity_description;
+                document.getElementById('preActivitySection').style.display = 'block';
+                
+                // Pre-activity photos
+                let prePhotos = [];
+                console.log('🔍 Pre-activity photos raw:', activityData.pre_activity_photos);
+                
+                if (Array.isArray(activityData.pre_activity_photos)) {
+                    prePhotos = activityData.pre_activity_photos;
+                } else if (typeof activityData.pre_activity_photos === 'string') {
+                    try { 
+                        prePhotos = JSON.parse(activityData.pre_activity_photos); 
+                        console.log('🔍 Parsed pre-activity photos:', prePhotos);
+                    } catch (e) { 
+                        console.error('❌ Error parsing pre-activity photos:', e);
+                        prePhotos = []; 
+                    }
+                }
+                
+                console.log('🔍 Final pre-activity photos:', prePhotos);
+                
+                if (prePhotos.length > 0) {
+                    const prePhotoGrid = document.getElementById('preActivityPhotoGrid');
+                    prePhotoGrid.innerHTML = prePhotos.map((photo, index) => `
+                        <div class="photo-card">
+                            <img src="/uploads/activity-photos/${encodeURIComponent(photo)}" 
+                                 alt="Faaliyet Öncesi Fotoğraf ${index + 1}"
+                                 onclick="openPhotoModal('${photo}', ${index + 1})">
+                            <div class="caption">Faaliyet Öncesi Fotoğraf ${index + 1}</div>
+                        </div>
+                    `).join('');
+                    document.getElementById('preActivityPhotoSection').style.display = 'block';
+                }
+            }
+
+            // Report description with photos
+            if (activityData.report_description) {
+                document.getElementById('reportContent').innerHTML = activityData.report_description;
+                document.getElementById('reportSection').style.display = 'block';
+                
+                // Report photos
+                let reportPhotos = [];
+                console.log('🔍 Report photos raw:', activityData.report_photos);
+                
+                if (Array.isArray(activityData.report_photos)) {
+                    reportPhotos = activityData.report_photos;
+                } else if (typeof activityData.report_photos === 'string') {
+                    try { 
+                        reportPhotos = JSON.parse(activityData.report_photos); 
+                        console.log('🔍 Parsed report photos:', reportPhotos);
+                    } catch (e) { 
+                        console.error('❌ Error parsing report photos:', e);
+                        reportPhotos = []; 
+                    }
+                }
+                
+                console.log('🔍 Final report photos:', reportPhotos);
+                
+                if (reportPhotos.length > 0) {
+                    const reportPhotoGrid = document.getElementById('reportPhotoGrid');
+                    reportPhotoGrid.innerHTML = reportPhotos.map((photo, index) => `
+                        <div class="photo-card">
+                            <img src="/uploads/activity-photos/${encodeURIComponent(photo)}" 
+                                 alt="Rapor Fotoğrafı ${index + 1}"
+                                 onclick="openPhotoModal('${photo}', ${index + 1})">
+                            <div class="caption">Rapor Fotoğrafı ${index + 1}</div>
+                        </div>
+                    `).join('');
+                    document.getElementById('reportPhotoSection').style.display = 'block';
+                }
+            }
+
+
+
+            // Opinions with photos
+            if (activityData.opinions) {
+                document.getElementById('opinionsContent').innerHTML = activityData.opinions;
+                document.getElementById('opinionsSection').style.display = 'block';
+                
+                // Opinion photos
+                let opinionPhotos = [];
+                console.log('🔍 Opinion photos raw:', activityData.opinion_photos);
+                
+                if (Array.isArray(activityData.opinion_photos)) {
+                    opinionPhotos = activityData.opinion_photos;
+                } else if (typeof activityData.opinion_photos === 'string') {
+                    try { 
+                        opinionPhotos = JSON.parse(activityData.opinion_photos); 
+                        console.log('🔍 Parsed opinion photos:', opinionPhotos);
+                    } catch (e) { 
+                        console.error('❌ Error parsing opinion photos:', e);
+                        opinionPhotos = []; 
+                    }
+                }
+                
+                console.log('🔍 Final opinion photos:', opinionPhotos);
+                
+                if (opinionPhotos.length > 0) {
+                    const opinionPhotoGrid = document.getElementById('opinionPhotoGrid');
+                    opinionPhotoGrid.innerHTML = opinionPhotos.map((photo, index) => `
+                        <div class="photo-card">
+                            <img src="/uploads/activity-photos/${encodeURIComponent(photo)}" 
+                                 alt="Görüş Fotoğrafı ${index + 1}"
+                                 onclick="openPhotoModal('${photo}', ${index + 1})">
+                            <div class="caption">Görüş Fotoğrafı ${index + 1}</div>
+                        </div>
+                    `).join('');
+                    document.getElementById('opinionPhotoSection').style.display = 'block';
+                }
+            }
+        }
+
+        // Download report removed
+
+        // Share activity
+        function shareActivity() {
+            if (navigator.share) {
+                navigator.share({
+                    title: activityData.title,
+                    text: activityData.report_description ? activityData.report_description.substring(0, 100) + '...' : 'HÜDDOSK faaliyet raporu',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy URL to clipboard
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('Bağlantı panoya kopyalandı!');
+                });
+            }
+        }
+
+        // Show loading state
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'flex';
+            document.getElementById('activityContent').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+        }
+
+        // Show error state
+        function showError(message) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('activityContent').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+            
+            const errorContainer = document.getElementById('errorState');
+            errorContainer.querySelector('p').textContent = message;
+        }
+
+        // Open photo modal
+        function openPhotoModal(photoName, index) {
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.id = 'photoModal';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Fotoğraf ${index}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img src="/uploads/activity-photos/${encodeURIComponent(photoName)}" 
+                                 class="img-fluid" 
+                                 alt="Fotoğraf ${index}"
+                                 style="max-height: 70vh;">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            const bootstrapModal = new bootstrap.Modal(modal);
+            bootstrapModal.show();
+            
+            modal.addEventListener('hidden.bs.modal', function() {
+                document.body.removeChild(modal);
+            });
+        }
+    </script>
+</body>
+</html> 

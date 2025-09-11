@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HÜDDOSK Admin - Faaliyetler</title>
+    <link rel="icon" href="/favicon.jpg" type="image/jpeg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- CKEditor 5 -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h4 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.8rem 1.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .sidebar-nav .nav-link i {
+            width: 20px;
+            margin-right: 0.5rem;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+        
+        .top-navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .activity-card {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-card:hover {
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .badge-type {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .btn-action {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            margin: 0 0.1rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            color: #495057;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 1rem;
+            font-weight: 600;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border: none;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%);
+        }
+
+        /* CKEditor Styling */
+        .ck-editor__editable {
+            min-height: 300px !important;
+            max-height: 600px !important;
+        }
+        
+        .ck.ck-editor {
+            border-radius: 0.375rem !important;
+        }
+        
+        .ck.ck-toolbar {
+            border-radius: 0.375rem 0.375rem 0 0 !important;
+        }
+
+        /* Photo upload styling */
+        .photo-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .photo-upload-area:hover {
+            border-color: #4CAF50;
+            background: #f0f8f0;
+        }
+
+        .photo-upload-area.dragover {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+
+        .uploaded-photos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .photo-preview {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #dee2e6;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-preview .remove-photo {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 0;
+        }
+
+        .section-content {
+            padding: 1.5rem;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-mountain fa-2x text-white mb-2"></i>
+            <h4>HÜDDOSK</h4>
+            <p class="text-white-50 mb-0">Admin Panel</p>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-link">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/activities" class="nav-link active">
+                <i class="fas fa-hiking"></i>
+                <span>Faaliyetler</span>
+            </a>
+            <a href="/admin/programs" class="nav-link">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Eğitim Programları</span>
+            </a>
+            <a href="/admin/team" class="nav-link">
+                <i class="fas fa-users"></i>
+                <span>Takım</span>
+            </a>
+            <a href="/admin/messages" class="nav-link">
+                <i class="fas fa-envelope"></i>
+                <span>Mesajlar</span>
+            </a>
+            <a href="/admin/settings" class="nav-link">
+                <i class="fas fa-cog"></i>
+                <span>Ayarlar</span>
+            </a>
+        </nav>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div class="d-flex align-items-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-hiking me-2 text-success"></i>
+                    Faaliyet Raporu Yönetimi
+                </h3>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="me-3">
+                    <div class="fw-bold" id="userName">Admin</div>
+                    <small class="text-muted" id="userRole">Administrator</small>
+                </div>
+                <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="container-fluid p-4">
+            <!-- Add Activity Form -->
+            <div class="content-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Yeni Faaliyet Raporu Oluştur
+                    </h5>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="toggleForm()">
+                        <i class="fas fa-chevron-down" id="formToggleIcon"></i>
+                    </button>
+                </div>
+                
+                <div id="addActivityForm" style="display: none;">
+                    <form id="activityForm">
+                        <!-- Temel Bilgiler -->
+                        <div class="card mb-4">
+                            <h6 class="section-header mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Temel Bilgiler
+                            </h6>
+                            <div class="section-content">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Faaliyet Başlığı *</label>
+                                        <input type="text" class="form-control" name="title" required 
+                                               placeholder="Örn: Parmakkaya Klasik Rota Faaliyet Raporu">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Faaliyet Tarihi *</label>
+                                        <input type="date" class="form-control" name="activity_date" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Bölge</label>
+                                        <input type="text" class="form-control" name="region" 
+                                               placeholder="Örn: Niğde, Aladağlar">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Rota</label>
+                                        <input type="text" class="form-control" name="route" 
+                                               placeholder="Örn: Parmakkaya Klasik Rotası (130m, 6b max)">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Hava Durumu</label>
+                                        <input type="text" class="form-control" name="weather_conditions" 
+                                               placeholder="Örn: Güneşli, 18°C, rüzgar hafif">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Raporu Yazan Kişi</label>
+                                        <input type="text" class="form-control" name="report_writer" 
+                                               placeholder="Raporu hazırlayan kişinin adı">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Ekip</label>
+                                        <textarea class="form-control" name="team" rows="3" 
+                                                  placeholder="Ekip lideri ve katılımcılar..."></textarea>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">Teknik Malzeme</label>
+                                        <textarea class="form-control" name="technical_equipment" rows="3" 
+                                                  placeholder="Kullanılan teknik malzemeler..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kapak Fotoğrafı -->
+                        <div class="card mb-4">
+                            <h6 class="section-header mb-0">
+                                <i class="fas fa-image me-2"></i>Kapak Fotoğrafı
+                            </h6>
+                            <div class="section-content">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Kapak Fotoğrafı</label>
+                                    <div class="photo-upload-area" onclick="document.getElementById('cover_photo').click()">
+                                        <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                        <p class="mb-1">Kapak fotoğrafı eklemek için tıklayın veya sürükleyin</p>
+                                        <small class="text-muted">Bu fotoğraf faaliyet listesinde görünecek</small>
+                                    </div>
+                                    <input type="file" id="cover_photo" name="cover_photo" 
+                                           accept="image/*" style="display: none;">
+                                    <div id="cover_photo_preview" class="uploaded-photos"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Faaliyet Öncesi -->
+                        <div class="card mb-4">
+                            <h6 class="section-header mb-0">
+                                <i class="fas fa-play-circle me-2"></i>Faaliyet Öncesi
+                            </h6>
+                            <div class="section-content">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Açıklama</label>
+                                    <textarea id="pre_activity_description" name="pre_activity_description" 
+                                              placeholder="Faaliyet öncesi hazırlıklar, planlamalar ve düşünceler..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Fotoğraflar</label>
+                                    <div class="photo-upload-area" onclick="document.getElementById('pre_activity_photos').click()">
+                                        <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                        <p class="mb-1">Fotoğraf eklemek için tıklayın veya sürükleyin</p>
+                                        <small class="text-muted">Faaliyet öncesi fotoğraflar</small>
+                                    </div>
+                                    <input type="file" id="pre_activity_photos" name="pre_activity_photos" 
+                                           multiple accept="image/*" style="display: none;">
+                                    <div id="pre_activity_photos_preview" class="uploaded-photos"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rapor -->
+                        <div class="card mb-4">
+                            <h6 class="section-header mb-0">
+                                <i class="fas fa-clipboard-list me-2"></i>Rapor
+                            </h6>
+                            <div class="section-content">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Açıklama</label>
+                                    <textarea id="report_description" name="report_description" 
+                                              placeholder="Faaliyet sırasında yaşananlar, teknik detaylar ve deneyimler..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Fotoğraflar</label>
+                                    <div class="photo-upload-area" onclick="document.getElementById('report_photos').click()">
+                                        <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                        <p class="mb-1">Fotoğraf eklemek için tıklayın veya sürükleyin</p>
+                                        <small class="text-muted">Faaliyet sırasında çekilen fotoğraflar</small>
+                                    </div>
+                                    <input type="file" id="report_photos" name="report_photos" 
+                                           multiple accept="image/*" style="display: none;">
+                                    <div id="report_photos_preview" class="uploaded-photos"></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Görüşler -->
+                        <div class="card mb-4">
+                            <h6 class="section-header mb-0">
+                                <i class="fas fa-comments me-2"></i>Görüşler
+                            </h6>
+                            <div class="section-content">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Açıklama</label>
+                                    <textarea id="opinions" name="opinions" 
+                                              placeholder="Genel görüşler, değerlendirmeler ve öneriler..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Fotoğraflar</label>
+                                    <div class="photo-upload-area" onclick="document.getElementById('opinion_photos').click()">
+                                        <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                        <p class="mb-1">Fotoğraf eklemek için tıklayın veya sürükleyin</p>
+                                        <small class="text-muted">Genel fotoğraflar</small>
+                                    </div>
+                                    <input type="file" id="opinion_photos" name="opinion_photos" 
+                                           multiple accept="image/*" style="display: none;">
+                                    <div id="opinion_photos_preview" class="uploaded-photos"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-secondary me-2" onclick="resetForm()">
+                                <i class="fas fa-times me-1"></i>
+                                İptal
+                            </button>
+                            <button type="submit" class="btn btn-success" id="submitBtn">
+                                <i class="fas fa-save me-1"></i>
+                                Faaliyet Raporu Oluştur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Activities List -->
+            <div class="content-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Faaliyet Raporları
+                        <span class="badge bg-primary ms-2" id="activityCount">0</span>
+                    </h5>
+                    <button class="btn btn-outline-primary btn-sm" onclick="loadActivities()">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        Yenile
+                    </button>
+                </div>
+                
+                <div id="activitiesContainer">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p class="mt-2">Faaliyet raporları yükleniyor...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Faaliyet Raporu Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <!-- Form fields will be populated by JavaScript -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-success" onclick="updateActivity()">Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let currentEditId = null;
+        let editors = {};
+        
+        // Initialize CKEditor editors with enhanced features
+        function initializeEditors() {
+            const editorConfigs = [
+                'pre_activity_description',
+                'report_description', 
+                'opinions'
+            ];
+            
+            editorConfigs.forEach(editorId => {
+                if (editors[editorId]) {
+                    editors[editorId].destroy();
+                }
+                
+                ClassicEditor
+                    .create(document.querySelector(`#${editorId}`), {
+                        toolbar: [
+                            'heading', '|', 
+                            'bold', 'italic', '|',
+                            'link', '|', 
+                            'bulletedList', 'numberedList', '|', 
+                            'blockQuote', '|',
+                            'imageUpload', '|',
+                            'undo', 'redo'
+                        ],
+                        language: 'tr',
+                        placeholder: document.querySelector(`#${editorId}`).placeholder,
+                        simpleUpload: {
+                            uploadUrl: '/api/admin/upload-image'
+                        }
+                    })
+                    .then(editor => {
+                        editors[editorId] = editor;
+                        
+                        // Debug: Image upload events
+                        editor.plugins.get('FileRepository').createUploadAdapter = function(loader) {
+                            return {
+                                upload: function() {
+                                    return loader.file.then(file => {
+                                        console.log('🔍 CKEditor uploading file:', file.name);
+                                        
+                                        const formData = new FormData();
+                                        formData.append('file', file);
+                                        
+                                        return fetch('/api/admin/upload-image', {
+                                            method: 'POST',
+                                            body: formData
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            console.log('🔍 CKEditor upload response:', data);
+                                            return {
+                                                default: data.url
+                                            };
+                                        });
+                                    });
+                                }
+                            };
+                        };
+                    })
+                    .catch(error => {
+                        console.error('CKEditor initialization error:', error);
+                    });
+            });
+        }
+
+        // Photo upload handling
+        function handlePhotoUpload(files, previewContainer) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const photoPreview = document.createElement('div');
+                        photoPreview.className = 'photo-preview';
+                        photoPreview.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview">
+                            <button type="button" class="remove-photo" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                        previewContainer.appendChild(photoPreview);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Photo upload handling
+        function setupPhotoUploads() {
+            const photoInputs = [
+                'cover_photo',
+                'pre_activity_photos',
+                'report_photos', 
+                'opinion_photos'
+            ];
+
+            photoInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                const preview = document.getElementById(inputId + '_preview');
+                const uploadArea = input.previousElementSibling;
+
+                // Click to upload
+                input.addEventListener('change', function(e) {
+                    handlePhotoUpload(e.target.files, preview);
+                });
+
+                // Drag and drop
+                uploadArea.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+
+                uploadArea.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                });
+
+                uploadArea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    
+                    // Dosyaları input'a ekle
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    
+                    // Mevcut dosyaları koru ve yeni dosyaları ekle
+                    const currentFiles = input.files;
+                    const newFileList = new DataTransfer();
+                    
+                    // Mevcut dosyaları ekle
+                    for (let i = 0; i < currentFiles.length; i++) {
+                        newFileList.items.add(currentFiles[i]);
+                    }
+                    
+                    // Yeni dosyaları ekle
+                    for (let i = 0; i < files.length; i++) {
+                        if (files[i].type.startsWith('image/')) {
+                            newFileList.items.add(files[i]);
+                        }
+                    }
+                    
+                    input.files = newFileList.files;
+                    handlePhotoUpload(files, preview);
+                });
+            });
+        }
+        
+        // Check authentication - session tabanlı auth kullanıyoruz
+        // Token kontrolü kaldırıldı, backend session kontrolü yapıyor
+        
+        // Update user info (session'dan gelecek)
+        document.getElementById('userName').textContent = 'Admin User';
+        document.getElementById('userRole').textContent = 'Administrator';
+        document.getElementById('userAvatar').textContent = 'A';
+        
+        // Toggle form visibility
+        function toggleForm() {
+            const form = document.getElementById('addActivityForm');
+            const icon = document.getElementById('formToggleIcon');
+            
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+                icon.className = 'fas fa-chevron-up';
+                // Initialize editors when form is shown
+                setTimeout(() => {
+                    initializeEditors();
+                    setupPhotoUploads();
+                }, 100);
+            } else {
+                form.style.display = 'none';
+                icon.className = 'fas fa-chevron-down';
+                // Destroy editors when form is hidden
+                Object.keys(editors).forEach(editorId => {
+                    if (editors[editorId]) {
+                        editors[editorId].destroy();
+                    }
+                });
+                editors = {};
+            }
+        }
+        
+        // Reset form
+        function resetForm() {
+            document.getElementById('activityForm').reset();
+            document.getElementById('addActivityForm').style.display = 'none';
+            document.getElementById('formToggleIcon').className = 'fas fa-chevron-down';
+            
+            // Clear photo previews
+            const previewContainers = [
+                'cover_photo_preview',
+                'pre_activity_photos_preview',
+                'report_photos_preview',
+                'opinion_photos_preview'
+            ];
+            
+            previewContainers.forEach(containerId => {
+                document.getElementById(containerId).innerHTML = '';
+            });
+            
+            // Destroy editors
+            Object.keys(editors).forEach(editorId => {
+                if (editors[editorId]) {
+                    editors[editorId].destroy();
+                }
+            });
+            editors = {};
+        }
+        
+        // Submit new activity
+        document.getElementById('activityForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            // Debug: FormData içeriğini kontrol et
+            console.log('🔍 Form submission started');
+            console.log('🔍 FormData entries:');
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('photos')) {
+                    console.log(`📸 ${key}:`, value);
+                } else {
+                    console.log(`📝 ${key}:`, value);
+                }
+            }
+            
+            // Get content from CKEditor editors
+            Object.keys(editors).forEach(editorId => {
+                const editor = editors[editorId];
+                if (editor) {
+                    formData.set(editorId, editor.getData());
+                }
+            });
+            
+            // Convert empty strings to null for text fields
+            const textFields = ['title', 'activity_date', 'region', 'route', 'team', 'technical_equipment', 'weather_conditions', 'report_writer', 'pre_activity_description', 'report_description', 'opinions'];
+            textFields.forEach(field => {
+                if (formData.get(field) === '') {
+                    formData.set(field, null);
+                }
+            });
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Oluşturuluyor...';
+            submitBtn.disabled = true;
+            
+            try {
+                console.log('🔍 Sending request to server...');
+                const response = await fetch('/api/admin/activities', {
+                    method: 'POST',
+                    credentials: 'include', // Session cookie için gerekli
+                    body: formData // FormData kullanıyoruz, Content-Type header'ı otomatik set edilecek
+                });
+                
+                console.log('🔍 Response status:', response.status);
+                const result = await response.json();
+                console.log('🔍 Response data:', result);
+                
+                if (result.success) {
+                    showAlert('success', 'Faaliyet raporu başarıyla oluşturuldu!');
+                    resetForm();
+                    loadActivities();
+                } else {
+                    showAlert('danger', result.message || 'Faaliyet raporu oluşturulurken hata oluştu');
+                }
+            } catch (error) {
+                console.error('❌ Add activity error:', error);
+                showAlert('danger', 'Bağlantı hatası');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Load activities
+        async function loadActivities() {
+            const container = document.getElementById('activitiesContainer');
+            container.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p class="mt-2">Faaliyet raporları yükleniyor...</p>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch('/api/activities');
+                const result = await response.json();
+                
+                if (result.success && result.data.length > 0) {
+                    displayActivities(result.data);
+                    document.getElementById('activityCount').textContent = result.data.length;
+                } else {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-hiking fa-3x mb-3"></i>
+                            <h5>Henüz faaliyet raporu bulunmuyor</h5>
+                            <p class="text-muted">İlk faaliyet raporunu oluşturmak için yukarıdaki formu kullanın.</p>
+                        </div>
+                    `;
+                    document.getElementById('activityCount').textContent = '0';
+                }
+            } catch (error) {
+                console.error('Load activities error:', error);
+                container.innerHTML = `
+                    <div class="text-center text-danger">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                        <p>Faaliyet raporları yüklenirken hata oluştu</p>
+                        <button class="btn btn-outline-primary btn-sm" onclick="loadActivities()">
+                            Tekrar Dene
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Display activities
+        function displayActivities(activities) {
+            const container = document.getElementById('activitiesContainer');
+            
+            container.innerHTML = activities.map(activity => `
+                <div class="activity-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-2">
+                                <h6 class="mb-0 me-3">${activity.title}</h6>
+                                <span class="badge bg-success badge-type">Faaliyet Raporu</span>
+                                <span class="badge bg-${activity.status === 'active' ? 'success' : 'secondary'} badge-type ms-1">${activity.status === 'active' ? 'Aktif' : 'Pasif'}</span>
+                            </div>
+                            
+                            <div class="row text-muted small">
+                                <div class="col-md-6">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    ${activity.region || 'Belirtilmemiş'}
+                                </div>
+                                <div class="col-md-6">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    ${formatDate(activity.activity_date)}
+                                </div>
+                            </div>
+                            
+                            ${activity.report_description ? `
+                                <p class="text-muted small mt-2 mb-0">${activity.report_description.substring(0, 150)}${activity.report_description.length > 150 ? '...' : ''}</p>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="d-flex flex-column">
+                            <button class="btn btn-outline-primary btn-action mb-1" onclick="editActivity(${activity.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-action" onclick="deleteActivity(${activity.id}, '${activity.title}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Helper functions
+        function formatDate(dateString) {
+            if (!dateString) return 'Belirtilmemiş';
+            return new Date(dateString).toLocaleDateString('tr-TR');
+        }
+        
+        // Delete activity
+        async function deleteActivity(id, title) {
+            if (!confirm(`"${title}" faaliyet raporunu silmek istediğinizden emin misiniz?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/activities/${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include' // Session cookie için gerekli
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('success', 'Faaliyet raporu başarıyla silindi');
+                    loadActivities();
+                } else {
+                    showAlert('danger', result.message || 'Silme işleminde hata oluştu');
+                }
+            } catch (error) {
+                console.error('Delete activity error:', error);
+                showAlert('danger', 'Bağlantı hatası');
+            }
+        }
+        
+        // Show alert
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }
+            }, 5000);
+        }
+        
+        // Logout function
+        async function logout() {
+            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                try {
+                    await fetch('/admin/logout', {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+                window.location.href = '/admin/login';
+            }
+        }
+        
+        // Load activities on page load
+        loadActivities();
+    </script>
+</body>
+</html> 

@@ -1,0 +1,1 @@
+// PDF indirme kaldırıldı; bu controller artık kullanılmıyor

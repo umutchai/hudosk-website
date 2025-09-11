@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HÜDDOSK Admin - Dashboard</title>
+    <link rel="icon" href="/favicon.jpg" type="image/jpeg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h4 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.8rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .top-navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            color: #495057;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-mountain fa-2x text-white mb-2"></i>
+            <h4>HÜDDOSK</h4>
+            <p class="text-white-50 mb-0">Admin Panel</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-link active">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </a>
+            <a href="/admin/activities" class="nav-link">
+                <i class="fas fa-hiking me-2"></i>Faaliyetler
+            </a>
+            <a href="/admin/education-programs" class="nav-link">
+                <i class="fas fa-graduation-cap me-2"></i>Eğitim Programları
+            </a>
+        </nav>
+    </div>
+    
+    <div class="main-content">
+        <div class="top-navbar">
+            <div class="d-flex align-items-center">
+                <h3 class="mb-0">Dashboard</h3>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="me-3">
+                    <div class="fw-bold" id="userName">Admin</div>
+                    <small class="text-muted" id="userRole">Administrator</small>
+                </div>
+                <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Çıkış
+                </button>
+            </div>
+        </div>
+        
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="stats-number text-primary" id="totalActivities">0</h2>
+                                <p class="mb-0">Toplam Faaliyet</p>
+                                <small class="text-success">
+                                    <span id="activeActivities">0</span> aktif
+                                </small>
+                            </div>
+                            <i class="fas fa-hiking fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="stats-number text-success" id="totalPrograms">0</h2>
+                                <p class="mb-0">Eğitim Programı</p>
+                                <small class="text-success">
+                                    <span id="activePrograms">0</span> aktif
+                                </small>
+                            </div>
+                            <i class="fas fa-graduation-cap fa-2x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="stats-number text-warning" id="totalTeam">0</h2>
+                                <p class="mb-0">Takım Üyesi</p>
+                                <small class="text-muted">Aktif üyeler</small>
+                            </div>
+                            <i class="fas fa-users fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="stats-number text-danger" id="totalMessages">0</h2>
+                                <p class="mb-0">Mesaj</p>
+                                <small class="text-warning">
+                                    <span id="newMessages">0</span> yeni
+                                </small>
+                            </div>
+                            <i class="fas fa-envelope fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Hoş Geldiniz!
+                            </h5>
+                            <p class="card-text">
+                                HÜDDOSK Admin paneline hoş geldiniz. Buradan faaliyetleri, eğitim programlarını
+                                ve diğer site içeriklerini yönetebilirsiniz.
+                            </p>
+                            <a href="/admin/activities" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i>
+                                Yeni Faaliyet Ekle
+                            </a>
+                            <a href="/api" class="btn btn-outline-primary ms-2" target="_blank">
+                                <i class="fas fa-book me-2"></i>
+                                API Dökümantasyonu
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Session-based authentication için token kontrolü kaldırıldı
+        // Backend zaten session kontrolü yapıyor
+        
+        // Default user info (session'dan gelecek)
+        document.getElementById('userName').textContent = 'Admin User';
+        document.getElementById('userRole').textContent = 'Administrator';
+        document.getElementById('userAvatar').textContent = 'A';
+        
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Session-based authentication, token header'ı kaldırıldı
+                const response = await fetch('/api/admin/dashboard/stats', {
+                    credentials: 'include' // Cookie/session için gerekli
+                });
+                
+                if (response.status === 401) {
+                    // Session süresi dolmuş, login sayfasına yönlendir
+                    alert('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.');
+                    window.location.href = '/admin/login';
+                    return;
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('totalActivities').textContent = result.data.activities.total;
+                    document.getElementById('activeActivities').textContent = result.data.activities.active;
+                    document.getElementById('totalPrograms').textContent = result.data.programs.total;
+                    document.getElementById('activePrograms').textContent = result.data.programs.active;
+                    document.getElementById('totalTeam').textContent = result.data.team.total;
+                    document.getElementById('totalMessages').textContent = result.data.messages.total;
+                    document.getElementById('newMessages').textContent = result.data.messages.new;
+                } else {
+                    console.error('Dashboard data error:', result.message);
+                }
+            } catch (error) {
+                console.error('Dashboard loading error:', error);
+            }
+        }
+        
+        function logout() {
+            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                fetch('/admin/logout', { 
+                    method: 'POST',
+                    credentials: 'include' // Session cookie için gerekli
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        window.location.href = '/admin/login';
+                    } else {
+                        alert('Çıkış yaparken hata oluştu');
+                    }
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                    window.location.href = '/admin/login';
+                });
+            }
+        }
+        
+        // Load data on page load
+        loadDashboardData();
+    </script>
+</body>
+</html> 

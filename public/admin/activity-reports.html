@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faaliyet Raporları Yönetimi - HÜDDOSK Admin</title>
+    <link rel="icon" href="/favicon.jpg" type="image/jpeg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            margin: 2px 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        .main-content {
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .photo-preview {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 5px;
+        }
+        .photo-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .photo-item {
+            position: relative;
+            display: inline-block;
+        }
+        .photo-remove {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .modal-content {
+            border-radius: 15px;
+        }
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status-draft {
+            background: #fff3cd;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 px-0 sidebar">
+                <div class="p-4">
+                    <h4 class="text-white mb-4">
+                        <i class="fas fa-mountain"></i> HÜDDOSK Admin
+                    </h4>
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="/admin/dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                        </a>
+                        <a class="nav-link" href="/admin/activities">
+                            <i class="fas fa-calendar-alt me-2"></i> Faaliyetler
+                        </a>
+                        <a class="nav-link active" href="/admin/activity-reports">
+                            <i class="fas fa-file-alt me-2"></i> Faaliyet Raporları
+                        </a>
+                        <a class="nav-link" href="/admin/education-programs">
+                            <i class="fas fa-graduation-cap me-2"></i> Eğitim Programları
+                        </a>
+                        <a class="nav-link" href="/admin/team">
+                            <i class="fas fa-users me-2"></i> Ekip
+                        </a>
+                        <a class="nav-link" href="/admin/messages">
+                            <i class="fas fa-envelope me-2"></i> Mesajlar
+                        </a>
+                        <a class="nav-link" href="/admin/settings">
+                            <i class="fas fa-cog me-2"></i> Ayarlar
+                        </a>
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-2"></i> Çıkış
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="fas fa-file-alt me-2"></i> Faaliyet Raporları Yönetimi</h2>
+                        <button class="btn btn-primary" onclick="openCreateModal()">
+                            <i class="fas fa-plus me-2"></i> Yeni Rapor Ekle
+                        </button>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title text-primary">Toplam Rapor</h5>
+                                    <h3 id="totalReports">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title text-success">Aktif Rapor</h5>
+                                    <h3 id="activeReports">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title text-warning">Taslak Rapor</h5>
+                                    <h3 id="draftReports">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title text-info">Bu Ay</h5>
+                                    <h3 id="thisMonthReports">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reports Table -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Faaliyet Raporları Listesi</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Başlık</th>
+                                            <th>Konum</th>
+                                            <th>Tarih</th>
+                                            <th>Katılımcı</th>
+                                            <th>Zorluk</th>
+                                            <th>Durum</th>
+                                            <th>İçerik</th>
+                                            <th>Fotoğraf</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="reportsTableBody">
+                                        <!-- Reports will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div class="modal fade" id="reportModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Yeni Faaliyet Raporu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reportForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Başlık *</label>
+                                    <input type="text" class="form-control" id="title" name="title" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Konum</label>
+                                    <input type="text" class="form-control" id="location" name="location">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Faaliyet Tarihi</label>
+                                    <input type="date" class="form-control" id="activity_date" name="activity_date">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Süre</label>
+                                    <input type="text" class="form-control" id="duration" name="duration" placeholder="Örn: 6 saat">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Zorluk Seviyesi</label>
+                                    <select class="form-select" id="difficulty_level" name="difficulty_level">
+                                        <option value="">Seçiniz</option>
+                                        <option value="Kolay">Kolay</option>
+                                        <option value="Orta">Orta</option>
+                                        <option value="Zor">Zor</option>
+                                        <option value="Çok Zor">Çok Zor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Katılımcı Sayısı</label>
+                                    <input type="number" class="form-control" id="participants_count" name="participants_count" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Detaylı İçerik (Rich Text Editor)</label>
+                            <textarea id="content" name="content"></textarea>
+                            <div class="form-text">Bu alan zengin metin editörü ile düzenlenebilir. Görseller ekleyebilir, metni formatlayabilirsiniz.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Hava Koşulları</label>
+                            <input type="text" class="form-control" id="weather_conditions" name="weather_conditions" placeholder="Örn: Güneşli, 15°C">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Kullanılan Ekipman</label>
+                            <textarea class="form-control" id="equipment_used" name="equipment_used" rows="2"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Rota Açıklaması</label>
+                            <textarea class="form-control" id="route_description" name="route_description" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Karşılaşılan Zorluklar</label>
+                            <textarea class="form-control" id="challenges_faced" name="challenges_faced" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Öğrenilen Dersler</label>
+                            <textarea class="form-control" id="lessons_learned" name="lessons_learned" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Öneriler</label>
+                            <textarea class="form-control" id="recommendations" name="recommendations" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fotoğraflar</label>
+                            <input type="file" class="form-control" id="photos" name="photos" multiple accept="image/*">
+                            <div class="form-text">Maksimum 10 fotoğraf, her biri 5MB'dan küçük olmalı</div>
+                        </div>
+
+                        <div id="photoPreview" class="photo-container">
+                            <!-- Photo previews will be shown here -->
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="saveReport()">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Raporu Sil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bu faaliyet raporunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">Sil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let reports = [];
+        let currentReportId = null;
+        let deleteReportId = null;
+
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = '/admin/login';
+            }
+        }
+
+        // Load reports
+        async function loadReports() {
+            try {
+                const response = await fetch('/api/activity-reports', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    reports = data.data || [];
+                    displayReports();
+                    updateStats();
+                } else {
+                    console.error('Raporlar yüklenemedi');
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+            }
+        }
+
+        // Display reports in table
+        function displayReports() {
+            const tbody = document.getElementById('reportsTableBody');
+            tbody.innerHTML = '';
+
+            reports.forEach(report => {
+                const row = document.createElement('tr');
+                
+                // Parse photos
+                let photos = [];
+                try {
+                    photos = JSON.parse(report.photos || '[]');
+                } catch (e) {
+                    photos = [];
+                }
+
+                row.innerHTML = `
+                    <td>${report.id}</td>
+                    <td>${report.title}</td>
+                    <td>${report.location || '-'}</td>
+                    <td>${report.activity_date ? new Date(report.activity_date).toLocaleDateString('tr-TR') : '-'}</td>
+                    <td>${report.participants_count || 0}</td>
+                    <td>${report.difficulty_level || '-'}</td>
+                    <td><span class="status-badge status-${report.status}">${report.status}</span></td>
+                    <td>
+                        <span class="badge ${report.content ? 'bg-success' : 'bg-secondary'}">
+                            ${report.content ? 'Var' : 'Yok'}
+                        </span>
+                    </td>
+                    <td>${photos.length} fotoğraf</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="editReport(${report.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteReport(${report.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = reports.length;
+            const active = reports.filter(r => r.status === 'active').length;
+            const draft = reports.filter(r => r.status === 'draft').length;
+            const thisMonth = reports.filter(r => {
+                const reportDate = new Date(r.created_at);
+                const now = new Date();
+                return reportDate.getMonth() === now.getMonth() && 
+                       reportDate.getFullYear() === now.getFullYear();
+            }).length;
+
+            document.getElementById('totalReports').textContent = total;
+            document.getElementById('activeReports').textContent = active;
+            document.getElementById('draftReports').textContent = draft;
+            document.getElementById('thisMonthReports').textContent = thisMonth;
+        }
+
+        // Open create modal
+        function openCreateModal() {
+            currentReportId = null;
+            document.getElementById('modalTitle').textContent = 'Yeni Faaliyet Raporu';
+            document.getElementById('reportForm').reset();
+            document.getElementById('photoPreview').innerHTML = '';
+            
+            // Reset TinyMCE content
+            if (tinymce.get('content')) {
+                tinymce.get('content').setContent('');
+            }
+            
+            const modal = new bootstrap.Modal(document.getElementById('reportModal'));
+            modal.show();
+        }
+
+        // Edit report
+        async function editReport(id) {
+            try {
+                const response = await fetch(`/api/activity-reports/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const report = data.data;
+                    
+                    currentReportId = id;
+                    document.getElementById('modalTitle').textContent = 'Faaliyet Raporunu Düzenle';
+                    
+                    // Fill form fields
+                    document.getElementById('title').value = report.title || '';
+                    document.getElementById('description').value = report.description || '';
+                    document.getElementById('location').value = report.location || '';
+                    document.getElementById('activity_date').value = report.activity_date || '';
+                    document.getElementById('duration').value = report.duration || '';
+                    document.getElementById('difficulty_level').value = report.difficulty_level || '';
+                    document.getElementById('participants_count').value = report.participants_count || '';
+                    document.getElementById('weather_conditions').value = report.weather_conditions || '';
+                    document.getElementById('equipment_used').value = report.equipment_used || '';
+                    document.getElementById('route_description').value = report.route_description || '';
+                    document.getElementById('challenges_faced').value = report.challenges_faced || '';
+                    document.getElementById('lessons_learned').value = report.lessons_learned || '';
+                    document.getElementById('recommendations').value = report.recommendations || '';
+                    
+                    // Set TinyMCE content
+                    if (tinymce.get('content')) {
+                        tinymce.get('content').setContent(report.content || '');
+                    }
+                    
+                    // Show existing photos
+                    let photos = [];
+                    try {
+                        photos = JSON.parse(report.photos || '[]');
+                    } catch (e) {
+                        photos = [];
+                    }
+                    
+                    displayPhotoPreviews(photos);
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('reportModal'));
+                    modal.show();
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+            }
+        }
+
+        // Save report
+        async function saveReport() {
+            const form = document.getElementById('reportForm');
+            const formData = new FormData(form);
+            
+            // Get TinyMCE content
+            if (tinymce.get('content')) {
+                formData.set('content', tinymce.get('content').getContent());
+            }
+            
+            try {
+                const url = currentReportId 
+                    ? `/api/admin/activity-reports/${currentReportId}`
+                    : '/api/admin/activity-reports';
+                
+                const method = currentReportId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    },
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(data.message);
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
+                    modal.hide();
+                    
+                    loadReports();
+                } else {
+                    const error = await response.json();
+                    alert('Hata: ' + error.message);
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+                alert('Bir hata oluştu');
+            }
+        }
+
+        // Delete report
+        function deleteReport(id) {
+            deleteReportId = id;
+            const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        }
+
+        // Confirm delete
+        async function confirmDelete() {
+            try {
+                const response = await fetch(`/api/admin/activity-reports/${deleteReportId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(data.message);
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                    modal.hide();
+                    
+                    loadReports();
+                } else {
+                    const error = await response.json();
+                    alert('Hata: ' + error.message);
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+                alert('Bir hata oluştu');
+            }
+        }
+
+        // Display photo previews
+        function displayPhotoPreviews(photos) {
+            const container = document.getElementById('photoPreview');
+            container.innerHTML = '';
+            
+            photos.forEach(photo => {
+                const photoDiv = document.createElement('div');
+                photoDiv.className = 'photo-item';
+                photoDiv.innerHTML = `
+                    <img src="/uploads/activity-photos/${encodeURIComponent(photo)}" class="photo-preview" alt="Photo">
+                    <button type="button" class="photo-remove" onclick="removePhoto('${photo}')">×</button>
+                `;
+                container.appendChild(photoDiv);
+            });
+        }
+
+        // Remove photo
+        async function removePhoto(photoName) {
+            if (!currentReportId) return;
+            
+            try {
+                const response = await fetch(`/api/admin/activity-reports/${currentReportId}/photos/${photoName}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
+                
+                if (response.ok) {
+                    alert('Fotoğraf silindi');
+                    editReport(currentReportId); // Reload the form
+                } else {
+                    const error = await response.json();
+                    alert('Hata: ' + error.message);
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+                alert('Bir hata oluştu');
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login';
+        }
+
+        // Photo preview on file select
+        document.getElementById('photos').addEventListener('change', function(e) {
+            const files = e.target.files;
+            const container = document.getElementById('photoPreview');
+            
+            // Clear existing previews for new uploads
+            if (!currentReportId) {
+                container.innerHTML = '';
+            }
+            
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const photoDiv = document.createElement('div');
+                        photoDiv.className = 'photo-item';
+                        photoDiv.innerHTML = `
+                            <img src="${e.target.result}" class="photo-preview" alt="Preview">
+                        `;
+                        container.appendChild(photoDiv);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+
+        // Initialize TinyMCE
+        function initTinyMCE() {
+            tinymce.init({
+                selector: '#content',
+                height: 400,
+                language: 'tr',
+                plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                ],
+                toolbar: 'undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | removeformat | help',
+                content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; line-height: 1.6; }',
+                menubar: false,
+                branding: false,
+                promotion: false,
+                images_upload_url: '/api/admin/upload-image',
+                images_upload_handler: function (blobInfo, success, failure) {
+                    var xhr, formData;
+                    xhr = new XMLHttpRequest();
+                    xhr.withCredentials = false;
+                    xhr.open('POST', '/api/admin/upload-image');
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('adminToken'));
+                    
+                    xhr.onload = function() {
+                        var json;
+                        if (xhr.status != 200) {
+                            failure('HTTP Error: ' + xhr.status);
+                            return;
+                        }
+                        json = JSON.parse(xhr.responseText);
+                        if (!json || typeof json.location != 'string') {
+                            failure('Invalid JSON: ' + xhr.responseText);
+                            return;
+                        }
+                        success(json.location);
+                    };
+                    
+                    xhr.onerror = function() {
+                        failure('Image upload failed');
+                    };
+                    
+                    formData = new FormData();
+                    formData.append('file', blobInfo.blob(), blobInfo.filename());
+                    xhr.send(formData);
+                },
+                setup: function (editor) {
+                    editor.on('change', function () {
+                        editor.save();
+                    });
+                }
+            });
+        }
+
+        // Initialize
+        checkAuth();
+        loadReports();
+        initTinyMCE();
+    </script>
+</body>
+</html> 

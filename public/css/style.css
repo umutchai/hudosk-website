@@ -1,0 +1,163 @@
+/* Custom CSS for HÜDDOSK Website */
+
+:root {
+    /* Primary brand color updated to user's purple */
+    --primary-green: #704ca3; /* legacy var name kept to avoid refactors */
+    --secondary-yellow: #ffc107;
+    --dark-bg: #212529;
+    --light-bg: #f8f9fa;
+}
+
+/* Theme overrides for Bootstrap "success" palette to use #704ca3 */
+.bg-success,
+.navbar.bg-success,
+.badge.bg-success,
+.alert-success,
+.list-group-item-success {
+    background-color: #704ca3 !important;
+    border-color: #704ca3 !important;
+}
+
+.text-success,
+.link-success {
+    color: #704ca3 !important;
+}
+
+.border-success {
+    border-color: #704ca3 !important;
+}
+
+.btn-success {
+    background-color: #704ca3 !important;
+    border-color: #704ca3 !important;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+    background-color: #5f3f8a !important;
+    border-color: #5f3f8a !important;
+}
+
+.btn-outline-success {
+    color: #704ca3 !important;
+    border-color: #704ca3 !important;
+}
+
+.btn-outline-success:hover,
+.btn-outline-success:focus {
+    color: #ffffff !important;
+    background-color: #704ca3 !important;
+    border-color: #704ca3 !important;
+}
+
+/* Form controls (toggles/checkboxes etc.) */
+.form-check-input:checked {
+    background-color: #704ca3 !important;
+    border-color: #704ca3 !important;
+}
+
+body {
+    padding-top: 76px; /* Account for fixed navbar */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Card hover effects */
+.card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+/* Feature icon styling */
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.feature-icon i {
+    display: block;
+    margin: 0 auto;
+}
+
+/* Hero Section */
+.hero-section {
+    height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/HuddoskLogo_page-0001.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.hero-overlay {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* Basic card styling */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        height: 80vh;
+        background-attachment: scroll;
+    }
+    
+    .display-3 {
+        font-size: 2.5rem;
+    }
+    
+    .display-6 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section {
+        height: 70vh;
+    }
+    
+    .display-3 {
+        font-size: 2rem;
+    }
+    
+    .display-6 {
+        font-size: 1.5rem;
+    }
+    
+    .lead {
+        font-size: 1rem;
+    }
+}
+
+/* Animation for fade in effect */
+.animate-fadeIn {
+    animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+} 

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HÜDDOSK Admin - Eğitim Programları</title>
+    <link rel="icon" href="/favicon.jpg" type="image/jpeg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-header h4 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.8rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+        
+        .top-navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            color: #495057;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 1rem;
+            font-weight: 600;
+        }
+        
+        .program-card {
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .program-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .btn-action {
+            margin: 0 2px;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .alert {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-mountain fa-2x text-white mb-2"></i>
+            <h4>HÜDDOSK</h4>
+            <p class="text-white-50 mb-0">Admin Panel</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-link">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </a>
+            <a href="/admin/activities" class="nav-link">
+                <i class="fas fa-hiking me-2"></i>Faaliyetler
+            </a>
+            <a href="/admin/education-programs" class="nav-link active">
+                <i class="fas fa-graduation-cap me-2"></i>Eğitim Programları
+            </a>
+        </nav>
+    </div>
+    
+    <div class="main-content">
+        <div class="top-navbar">
+            <div class="d-flex align-items-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-graduation-cap me-2 text-success"></i>
+                    Eğitim Programları Yönetimi
+                </h3>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="me-3">
+                    <div class="fw-bold" id="userName">Admin</div>
+                    <small class="text-muted" id="userRole">Administrator</small>
+                </div>
+                <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Çıkış
+                </button>
+            </div>
+        </div>
+        
+        <div class="container-fluid p-4">
+            <!-- Başarı/Hata Mesajları -->
+            <div id="alertContainer"></div>
+            
+            <!-- Üst Butonlar -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Eğitim Programları Listesi</h4>
+                        <button class="btn btn-success" onclick="openAddModal()">
+                            <i class="fas fa-plus me-2"></i>Yeni Program Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Yükleme Durumu -->
+            <div id="loadingContainer" class="text-center py-5">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
+                </div>
+                <p class="mt-3 text-muted">Eğitim programları yükleniyor...</p>
+            </div>
+            
+            <!-- Programlar Listesi -->
+            <div id="programsContainer" class="row" style="display: none;">
+                <!-- Programlar buraya dinamik olarak yüklenecek -->
+            </div>
+            
+            <!-- Boş Durum -->
+            <div id="emptyContainer" class="text-center py-5" style="display: none;">
+                <i class="fas fa-graduation-cap fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Henüz eğitim programı bulunmuyor</h5>
+                <p class="text-muted">İlk eğitim programını eklemek için yukarıdaki butonu kullanın.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Program Ekleme/Düzenleme Modal -->
+    <div class="modal fade" id="programModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">
+                        <i class="fas fa-plus me-2"></i>Yeni Eğitim Programı
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="programForm">
+                        <input type="hidden" id="programId" name="id">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="title" class="form-label">Program Adı *</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">Yer *</label>
+                                <input type="text" class="form-control" id="location" name="location" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+                                <input type="date" class="form-control" id="startDate" name="start_date">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="endDate" class="form-label">Bitiş Tarihi</label>
+                                <input type="date" class="form-control" id="endDate" name="end_date">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="difficultyLevel" class="form-label">Zorluk Seviyesi</label>
+                                <select class="form-select" id="difficultyLevel" name="difficulty_level">
+                                    <option value="beginner">Başlangıç</option>
+                                    <option value="intermediate">Orta</option>
+                                    <option value="advanced">İleri</option>
+                                    <option value="expert">Uzman</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label">Durum</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="active">Aktif</option>
+                                    <option value="inactive">Pasif</option>
+                                    <option value="draft">Taslak</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="prerequisites" class="form-label">Önkoşullar</label>
+                                <textarea class="form-control" id="prerequisites" name="prerequisites" rows="3" placeholder="Her satıra bir önkoşul yazın"></textarea>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="curriculum" class="form-label">Müfredat</label>
+                                <textarea class="form-control" id="curriculum" name="curriculum" rows="3" placeholder="Her satıra bir müfredat konusu yazın"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="instructor" class="form-label">Eğitmen</label>
+                            <input type="text" class="form-control" id="instructor" name="instructor" value="Arda Ünlü, Hasan Mert Taluy">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>İptal
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="saveProgram()">
+                        <i class="fas fa-save me-2"></i>Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Silme Onay Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Programı Sil
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">
+                        <strong id="deleteProgramTitle"></strong> programını silmek istediğinizden emin misiniz?
+                    </p>
+                    <div class="alert alert-warning mt-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Dikkat:</strong> Bu işlem geri alınamaz ve program veritabanından tamamen silinecektir.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>İptal
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                        <i class="fas fa-trash me-2"></i>Evet, Sil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let programs = [];
+        let currentDeleteId = null;
+        
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadPrograms();
+        });
+        
+        // Kimlik doğrulama kontrolü
+        function checkAuth() {
+            // Session-based authentication için basit kontrol
+            // Eğer sayfa yüklendiyse session vardır
+            console.log('Auth check passed - page loaded successfully');
+            
+            // Kullanıcı bilgilerini session'dan al
+            fetch('/api/admin/user-info', {
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.user) {
+                    document.getElementById('userName').textContent = data.user.email || data.user.username || 'Admin';
+                    document.getElementById('userAvatar').textContent = (data.user.email || data.user.username || 'A').charAt(0).toUpperCase();
+                } else {
+                    document.getElementById('userName').textContent = 'Admin';
+                    document.getElementById('userAvatar').textContent = 'A';
+                }
+            })
+            .catch(() => {
+                document.getElementById('userName').textContent = 'Admin';
+                document.getElementById('userAvatar').textContent = 'A';
+            });
+        }
+        
+        // Çıkış yap
+        function logout() {
+            fetch('/admin/logout', {
+                method: 'POST',
+                credentials: 'include'
+            }).then(() => {
+                window.location.href = '/admin/login';
+            }).catch(() => {
+                window.location.href = '/admin/login';
+            });
+        }
+        
+        // Programları yükle
+        async function loadPrograms() {
+            try {
+                const response = await fetch('/api/admin/education/programs', {
+                    credentials: 'include' // Session cookie'leri gönder
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Programlar yüklenemedi');
+                }
+                
+                const result = await response.json();
+                programs = result.data || result; // API response formatına göre ayarla
+                displayPrograms();
+                
+            } catch (error) {
+                showAlert('Programlar yüklenirken hata oluştu: ' + error.message, 'danger');
+            }
+        }
+        
+        // Programları göster
+        function displayPrograms() {
+            const container = document.getElementById('programsContainer');
+            const loading = document.getElementById('loadingContainer');
+            const empty = document.getElementById('emptyContainer');
+            
+            loading.style.display = 'none';
+            
+            if (programs.length === 0) {
+                empty.style.display = 'block';
+                container.style.display = 'none';
+                return;
+            }
+            
+            empty.style.display = 'none';
+            container.style.display = 'block';
+            
+            container.innerHTML = programs.map(program => `
+                <div class="col-lg-6 col-xl-4 mb-4">
+                    <div class="card program-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title text-success mb-0">${program.title}</h5>
+                                <span class="badge bg-${getStatusColor(program.status)}">${getStatusText(program.status)}</span>
+                            </div>
+                            
+                            <p class="card-text text-muted mb-3">${program.description || 'Açıklama yok'}</p>
+                            
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted">Yer:</small><br>
+                                    <strong>${program.location || 'Belirtilmemiş'}</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Seviye:</small><br>
+                                    <strong>${getDifficultyText(program.difficulty_level)}</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted">Eğitmen:</small><br>
+                                    <strong>${program.instructor || 'Belirtilmemiş'}</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Tarih:</small><br>
+                                    <strong>${formatDate(program.start_date)}</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-outline-primary btn-sm btn-action" onclick="editProgram(${program.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm btn-action" onclick="deleteProgram(${program.id}, '${program.title}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Modal aç
+        function openAddModal() {
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus me-2"></i>Yeni Eğitim Programı';
+            document.getElementById('programForm').reset();
+            document.getElementById('programId').value = '';
+            new bootstrap.Modal(document.getElementById('programModal')).show();
+        }
+        
+        // Program düzenle
+        function editProgram(id) {
+            console.log('Edit program called with id:', id);
+            const program = programs.find(p => p.id === id);
+            if (!program) {
+                console.error('Program not found with id:', id);
+                return;
+            }
+            
+            console.log('Found program:', program);
+            
+            // Bootstrap kontrolü
+            if (typeof bootstrap === 'undefined') {
+                console.error('Bootstrap is not loaded!');
+                alert('Bootstrap yüklenemedi. Sayfayı yenileyin.');
+                return;
+            }
+            
+            // Modal element kontrolü
+            const modalElement = document.getElementById('programModal');
+            if (!modalElement) {
+                console.error('Modal element not found!');
+                return;
+            }
+            
+            document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit me-2"></i>Programı Düzenle';
+            document.getElementById('programId').value = program.id;
+            document.getElementById('title').value = program.title;
+            document.getElementById('location').value = program.location || '';
+            document.getElementById('startDate').value = program.start_date || '';
+            document.getElementById('endDate').value = program.end_date || '';
+            document.getElementById('difficultyLevel').value = program.difficulty_level || 'beginner';
+            document.getElementById('status').value = program.status || 'active';
+            document.getElementById('description').value = program.description || '';
+            document.getElementById('instructor').value = program.instructor || 'Arda Ünlü, Hasan Mert Taluy';
+            
+            // Önkoşullar ve müfredatı doldur
+            const prerequisites = program.prerequisites && Array.isArray(program.prerequisites) ? program.prerequisites.join('\n') : '';
+            const curriculum = program.curriculum && Array.isArray(program.curriculum) ? program.curriculum.join('\n') : '';
+            document.getElementById('prerequisites').value = prerequisites;
+            document.getElementById('curriculum').value = curriculum;
+            
+            console.log('Modal opening...');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+        
+        // Program kaydet
+        async function saveProgram() {
+            console.log('Save program called');
+            const form = document.getElementById('programForm');
+            const formData = new FormData(form);
+            
+            // Önkoşullar ve müfredatı JSON'a çevir
+            const prerequisites = formData.get('prerequisites').split('\n').filter(item => item.trim());
+            const curriculum = formData.get('curriculum').split('\n').filter(item => item.trim());
+            
+            const data = {
+                title: formData.get('title'),
+                location: formData.get('location'),
+                start_date: formData.get('start_date'),
+                end_date: formData.get('end_date'),
+                difficulty_level: formData.get('difficulty_level'),
+                status: formData.get('status'),
+                description: formData.get('description'),
+                instructor: formData.get('instructor'),
+                prerequisites: JSON.stringify(prerequisites),
+                curriculum: JSON.stringify(curriculum)
+            };
+            
+            const id = formData.get('id');
+            const url = id ? `/api/education/programs/${id}` : '/api/education/programs';
+            const method = id ? 'PUT' : 'POST';
+            
+            console.log('Saving program with data:', data);
+            console.log('URL:', url, 'Method:', method);
+            
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include', // Session cookie'leri gönder
+                    body: JSON.stringify(data)
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error('Program kaydedilemedi: ' + errorText);
+                }
+                
+                const result = await response.json();
+                console.log('Success response:', result);
+                
+                showAlert(id ? 'Program başarıyla güncellendi!' : 'Program başarıyla eklendi!', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('programModal')).hide();
+                loadPrograms();
+                
+            } catch (error) {
+                console.error('Save error:', error);
+                showAlert('Program kaydedilirken hata oluştu: ' + error.message, 'danger');
+            }
+        }
+        
+        // Program silme modalını aç
+        function deleteProgram(id, title) {
+            currentDeleteId = id;
+            document.getElementById('deleteProgramTitle').textContent = title;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+        
+        // Silme işlemini onayla
+        async function confirmDelete() {
+            if (!currentDeleteId) return;
+            
+            try {
+                const response = await fetch(`/api/education/programs/${currentDeleteId}`, {
+                    method: 'DELETE',
+                    credentials: 'include' // Session cookie'leri gönder
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Program silinemedi');
+                }
+                
+                showAlert('Program başarıyla silindi!', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+                loadPrograms();
+                
+            } catch (error) {
+                showAlert('Program silinirken hata oluştu: ' + error.message, 'danger');
+            }
+        }
+        
+        // Yardımcı fonksiyonlar
+        function getStatusColor(status) {
+            switch (status) {
+                case 'active': return 'success';
+                case 'inactive': return 'secondary';
+                case 'draft': return 'warning';
+                default: return 'secondary';
+            }
+        }
+        
+        function getStatusText(status) {
+            switch (status) {
+                case 'active': return 'Aktif';
+                case 'inactive': return 'Pasif';
+                case 'draft': return 'Taslak';
+                default: return 'Bilinmiyor';
+            }
+        }
+        
+        function getDifficultyText(level) {
+            switch (level) {
+                case 'beginner': return 'Başlangıç';
+                case 'intermediate': return 'Orta';
+                case 'advanced': return 'İleri';
+                case 'expert': return 'Uzman';
+                default: return 'Belirtilmemiş';
+            }
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'Belirtilmemiş';
+            return new Date(dateString).toLocaleDateString('tr-TR');
+        }
+        
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 

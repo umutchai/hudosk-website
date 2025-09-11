@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tüzük - HÜDDOSK</title>
+    <link rel="icon" href="/favicon.jpg" type="image/jpeg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .tuzuk-wrapper { display: flex; justify-content: center; }
+        .tuzuk-card { max-width: 900px; width: 100%; margin: 0 auto; }
+        #tuzuk-include pre { margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4" href="/">
+                <img src="/images/HuddoskLogo_page-0001.jpg" alt="HÜDDOSK" style="height: 36px; width: auto; border-radius: 4px;" />
+                <span>HÜDDOSK</span>
+                <span class="d-none d-lg-inline ms-2 fw-normal" style="font-size: 0.9rem;">Hacettepe Üniversitesi Dağcılık ve Doğa Sporları Kulübü</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Ana Sayfa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/faaliyet-raporlari">
+                            <i class="fas fa-clipboard-list me-1"></i>Faaliyet Raporları
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/egitim-programlari">
+                            <i class="fas fa-graduation-cap me-1"></i>HÜDDOSK Eğitim Planı
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/tuzuk">
+                            <i class="fas fa-file-alt me-1"></i>Tüzük
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-5" style="margin-top: 56px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-4">
+                    <h1 class="display-5 fw-bold">
+                        <i class="fas fa-file-alt me-2"></i>
+                        HÜDDOSK Tüzüğü
+                    </h1>
+                    <p class="text-muted">Kulübün amaçları, organları, üyelik şartları ve işleyişini düzenleyen esaslar</p>
+                </div>
+            </div>
+
+            <div class="row tuzuk-wrapper">
+                <div class="col-lg-10 mx-auto">
+                    <div class="card shadow-sm border-0 tuzuk-card">
+                        <div class="card-body p-4">
+                            <div id="tuzukContent" class="rich-content">
+                                <div id="tuzuk-include"></div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="mb-3 d-flex align-items-center justify-content-center gap-2">
+                        <img src="/images/HuddoskLogo_page-0001.jpg" alt="HÜDDOSK" style="height: 28px; width: auto; border-radius: 4px;" />
+                        <span>HÜDDOSK</span>
+                    </h5>
+                    <p class="mb-2">Doğa Sporları ve Tırmanış Topluluğu</p>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/huddosk/" target="_blank" rel="noopener noreferrer" class="text-white me-3">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <p class="small text-white-50 mt-3 mb-0">Huddosk’ta yayımlanan içerikler yalnızca kişisel kullanım amacıyla paylaşılabilir; ticari yayın organlarında izinsiz kullanımı yasaktır. İçeriklerin uygulanmasından doğabilecek risk ve zararlardan Huddosk sorumlu değildir.</p>
+                    <hr class="my-3">
+                    <p class="mb-0">&copy; 2025 HÜDDOSK. Tüm hakları saklıdır.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Basit içerik dahil etme: /tuzuk-content.html dosyasını sayfaya yükle
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('/tuzuk-content.html');
+                if (response.ok) {
+                    const html = await response.text();
+                    const container = document.getElementById('tuzuk-include');
+                    container.innerHTML = html;
+                }
+            } catch (e) {
+                console.warn('Tüzük içeriği yüklenemedi:', e);
+            }
+        });
+    </script>
+</body>
+</html>
+
+

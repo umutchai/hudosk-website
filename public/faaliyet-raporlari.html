@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faaliyet Raporları - HÜDDOSK</title>
+    <link rel="icon" href="/favicon.jpg" type="image/jpeg">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        
+        
+        .rich-content {
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .rich-content h1, .rich-content h2, .rich-content h3, .rich-content h4, .rich-content h5, .rich-content h6 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        
+        .rich-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .rich-content ul, .rich-content ol {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+        
+        .rich-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .rich-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .rich-content blockquote {
+            border-left: 4px solid #28a745;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .rich-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .rich-content th, .rich-content td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        .rich-content th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        /* Activity Cards Styling */
+        .card {
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .card-img-top {
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        
+        .badge-type {
+            font-size: 0.8rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+        }
+        
+        .activity-meta {
+            font-size: 0.8rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            background-color: #f8f9fa !important;
+            color: #495057 !important;
+            border: 1px solid #e9ecef;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 0.75rem;
+        }
+        
+        .card-text {
+            color: #6c757d;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-outline-success {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-title {
+                font-size: 1rem;
+            }
+            
+            .card-body {
+                padding: 1rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4" href="/">
+                <img src="/images/HuddoskLogo_page-0001.jpg" alt="HÜDDOSK" style="height: 36px; width: auto; border-radius: 4px;" />
+                <span>HÜDDOSK</span>
+                <span class="d-none d-lg-inline ms-2 fw-normal" style="font-size: 0.9rem;">Hacettepe Üniversitesi Dağcılık ve Doğa Sporları Kulübü</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Ana Sayfa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/faaliyet-raporlari">
+                            <i class="fas fa-clipboard-list me-1"></i>Faaliyet Raporları
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/egitim-programlari">
+                            <i class="fas fa-graduation-cap me-1"></i>HÜDDOSK Eğitim Planı
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tuzuk">
+                            <i class="fas fa-file-alt me-1"></i>Tüzük
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="py-5" style="background: linear-gradient(135deg, #704ca3 0%, #8b6bc0 100%); color: #fff;">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1 class="display-4 fw-bold mb-3">
+                        <i class="fas fa-clipboard-list me-3"></i>
+                        Faaliyet Raporları
+                    </h1>
+                    <p class="lead">Gerçekleştirdiğimiz tırmanış faaliyetleri ve doğa sporları deneyimlerimiz</p>
+                    <p class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Toplam <span id="totalActivities" class="fw-bold">...</span> faaliyet
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- Reports Section -->
+    <section class="py-5">
+        <div class="container">
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-spinner">
+                <div class="text-center">
+                    <div class="spinner-border" style="color:#704ca3; width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Faaliyetler yükleniyor...</p>
+                </div>
+            </div>
+
+            <!-- Activities Container -->
+            <div id="activitiesContainer" class="row activities-container" style="display: none;">
+                <!-- Activities will be loaded here dynamically -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-hiking"></i>
+                <h4>Henüz faaliyet bulunmuyor</h4>
+                <p>Bu kategoride henüz bir faaliyet raporu bulunmamaktadır.</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="text-center" style="display: none;">
+                <div class="text-danger">
+                    <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                    <h5>Bir hata oluştu</h5>
+                    <p>Faaliyetler yüklenirken bir sorun oluştu. Lütfen sayfayı yenileyin.</p>
+                    <button class="btn btn-success" style="background-color:#704ca3;border-color:#704ca3;" onclick="loadActivities()">
+                        <i class="fas fa-sync-alt me-2"></i>Tekrar Dene
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activity Detail Modal -->
+    <div class="modal fade" id="activityModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="activityModalTitle">Faaliyet Detayları</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="activityModalBody">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="mb-3 d-flex align-items-center justify-content-center gap-2">
+                        <img src="/images/HuddoskLogo_page-0001.jpg" alt="HÜDDOSK" style="height: 28px; width: auto; border-radius: 4px;" />
+                        <span>HÜDDOSK</span>
+                    </h5>
+                    <p class="mb-2">Doğa Sporları ve Tırmanış Topluluğu</p>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/huddosk/" target="_blank" rel="noopener noreferrer" class="text-white me-3">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <p class="small text-white-50 mt-3 mb-0">Huddosk’ta yayımlanan içerikler yalnızca kişisel kullanım amacıyla paylaşılabilir; ticari yayın organlarında izinsiz kullanımı yasaktır. İçeriklerin uygulanmasından doğabilecek risk ve zararlardan Huddosk sorumlu değildir.</p>
+                    <hr class="my-3">
+                    <p class="mb-0">&copy; 2025 HÜDDOSK. Tüm hakları saklıdır.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let allActivityReports = [];
+
+        // Kapak fotoğrafı alma fonksiyonu
+        function getCoverPhoto(report) {
+            // Önce cover_photo alanını kontrol et
+            if (report.cover_photo) {
+                return report.cover_photo;
+            }
+            
+            // cover_photo yoksa report_photos'dan ilk fotoğrafı al
+            if (report.report_photos) {
+                let photos = [];
+                if (Array.isArray(report.report_photos)) {
+                    photos = report.report_photos;
+                } else if (typeof report.report_photos === 'string') {
+                    try { 
+                        photos = JSON.parse(report.report_photos); 
+                    } catch (e) { 
+                        photos = []; 
+                    }
+                }
+                
+                if (photos.length > 0) {
+                    return photos[0];
+                }
+            }
+            
+            // pre_activity_photos'dan da kontrol et
+            if (report.pre_activity_photos) {
+                let photos = [];
+                if (Array.isArray(report.pre_activity_photos)) {
+                    photos = report.pre_activity_photos;
+                } else if (typeof report.pre_activity_photos === 'string') {
+                    try { 
+                        photos = JSON.parse(report.pre_activity_photos); 
+                    } catch (e) { 
+                        photos = []; 
+                    }
+                }
+                
+                if (photos.length > 0) {
+                    return photos[0];
+                }
+            }
+            
+            // opinion_photos'dan da kontrol et
+            if (report.opinion_photos) {
+                let photos = [];
+                if (Array.isArray(report.opinion_photos)) {
+                    photos = report.opinion_photos;
+                } else if (typeof report.opinion_photos === 'string') {
+                    try { 
+                        photos = JSON.parse(report.opinion_photos); 
+                    } catch (e) { 
+                        photos = []; 
+                    }
+                }
+                
+                if (photos.length > 0) {
+                    return photos[0];
+                }
+            }
+            
+            // Hiç fotoğraf yoksa null döndür
+            return null;
+        }
+
+        // Load activity reports on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadActivities();
+        });
+
+        // Load activity reports from API
+        async function loadActivityReports() {
+            try {
+                showLoading();
+                
+                // DEĞİŞTİRİLDİ: Artık /api/activities endpointi kullanılıyor
+                const response = await fetch('/api/activities');
+                if (response.ok) {
+                    const data = await response.json();
+                    allActivityReports = data.data || [];
+                    displayActivities(allActivityReports);
+                    updateStats();
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('Error loading activity reports:', error);
+                showError();
+            }
+        }
+
+        
+
+        
+
+        // Show report detail
+        async function showReportDetail(id) {
+            try {
+                const response = await fetch(`/api/activity-reports/${id}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const report = data.data;
+                    
+                    let photos = [];
+                    try {
+                        photos = JSON.parse(report.photos || '[]');
+                    } catch (e) {
+                        photos = [];
+                    }
+                    
+                    const getDifficultyClass = (level) => {
+                        switch(level) {
+                            case 'Kolay': return 'success';
+                            case 'Orta': return 'warning';
+                            case 'Zor': return 'danger';
+                            case 'Çok Zor': return 'dark';
+                            default: return 'secondary';
+                        }
+                    };
+                    
+                    document.getElementById('activityModalTitle').textContent = report.title;
+                    document.getElementById('activityModalBody').innerHTML = `
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="text-muted mb-3">Faaliyet Bilgileri</h6>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <strong>Konum:</strong><br>
+                                        ${report.location || 'Belirtilmemiş'}
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Tarih:</strong><br>
+                                        ${report.activity_date ? new Date(report.activity_date).toLocaleDateString('tr-TR') : 'Belirtilmemiş'}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <strong>Süre:</strong><br>
+                                        ${report.duration || 'Belirtilmemiş'}
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Zorluk:</strong><br>
+                                        <span class="badge bg-${getDifficultyClass(report.difficulty_level)}">
+                                            ${report.difficulty_level || 'Belirtilmemiş'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <strong>Katılımcı:</strong><br>
+                                        ${report.participants_count || 0} kişi
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Hava:</strong><br>
+                                        ${report.weather_conditions || 'Belirtilmemiş'}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="text-muted mb-3">Hızlı İndirme</h6>
+                                <button class="btn btn-outline-success btn-sm w-100 mb-2" onclick="downloadReport(${report.id})">
+                                    <i class="fas fa-download me-2"></i>Raporu İndir
+                                </button>
+                            </div>
+                        </div>
+                        
+                        ${report.description ? `
+                            <hr>
+                            <h6 class="text-muted mb-3">Açıklama</h6>
+                            <p>${report.description}</p>
+                        ` : ''}
+                        
+                        ${report.content ? `
+                            <hr>
+                            <h6 class="text-muted mb-3">Detaylı İçerik</h6>
+                            <div class="rich-content">
+                                ${report.content}
+                            </div>
+                        ` : ''}
+                        
+                        ${report.equipment_used ? `
+                            <hr>
+                            <h6 class="text-muted mb-3">Kullanılan Ekipman</h6>
+                            <p>${report.equipment_used}</p>
+                        ` : ''}
+                        
+                        ${report.route_description ? `
+                            <hr>
+                            <h6 class="text-muted mb-3">Rota Açıklaması</h6>
+                            <p>${report.route_description}</p>
+                        ` : ''}
+                        
+                        ${report.challenges_faced ? `
+                            <hr>
+                            <h6 class="text-muted mb-3">Karşılaşılan Zorluklar</h6>
+                            <p>${report.challenges_faced}</p>
+                        ` : ''}
+                        
+                        ${report.lessons_learned ? `
+                            <hr>
+                            <h6 class="text-muted mb-3">Öğrenilen Dersler</h6>
+                            <p>${report.lessons_learned}</p>
+                        ` : ''}
+                        
+                        ${report.recommendations ? `
+                            <hr>
+                            <h6 class="text-muted mb-3">Öneriler</h6>
+                            <p>${report.recommendations}</p>
+                        ` : ''}
+                        
+                        ${photos.length > 0 ? `
+                            <hr>
+                            <h6 class="text-muted mb-3">Faaliyet Fotoğrafları (${photos.length} adet)</h6>
+                            <div class="row">
+                                ${photos.map((photo, index) => `
+                                    <div class="col-md-4 mb-3">
+                                        <img src="/uploads/activity-photos/${encodeURIComponent(photo)}" 
+                                             class="img-fluid rounded" 
+                                             alt="Faaliyet Fotoğrafı ${index + 1}"
+                                             style="max-height: 200px; object-fit: cover;">
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    `;
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('activityModal'));
+                    modal.show();
+                }
+            } catch (error) {
+                console.error('Error loading report detail:', error);
+                alert('Rapor detayları yüklenirken bir hata oluştu.');
+            }
+        }
+
+        // Download report
+        function downloadReport(id) {
+            window.open(`/api/pdf/activity-reports?id=${id}`, '_blank');
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalActivities').textContent = allActivities.length;
+        }
+
+        // Show loading state
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'flex';
+            document.getElementById('activitiesContainer').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+        }
+
+        // Show empty state
+        function showEmpty() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('activitiesContainer').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('errorState').style.display = 'none';
+        }
+
+        // Show error state
+        function showError() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('activitiesContainer').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+        }
+
+        // Load activities from API
+        async function loadActivities() {
+            showLoading();
+            
+            try {
+                const response = await fetch('/api/activities');
+                const result = await response.json();
+                
+                if (result.success) {
+                    allActivities = result.data || [];
+                    displayActivities(allActivities);
+                    updateActivityCount(allActivities.length);
+                    
+                    if (allActivities.length === 0) {
+                        showEmptyState();
+                    } else {
+                        hideEmptyState();
+                    }
+                } else {
+                    throw new Error(result.message || 'Veri yüklenemedi');
+                }
+            } catch (error) {
+                console.error('Activities loading error:', error);
+                showErrorState();
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Display activities
+        function displayActivities(activities) {
+            const container = document.getElementById('activitiesContainer');
+            
+            if (activities.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            container.innerHTML = activities.map(activity => createActivityCard(activity)).join('');
+            // Let CSS classes control display (e.g., .row uses flex)
+            container.style.display = '';
+            hideEmptyState();
+        }
+
+        // Create activity card HTML
+        function createActivityCard(activity) {
+            const typeInfo = getActivityTypeInfo(activity.type);
+            const difficultyInfo = getDifficultyInfo(activity.difficulty_level);
+            const descriptionText = activity.report_description || activity.pre_activity_description || '';
+            
+            // Get first image for preview - use report_photos field
+            let previewImage = null;
+            if (activity.report_photos) {
+                try {
+                    const photos = typeof activity.report_photos === 'string' ? 
+                        JSON.parse(activity.report_photos) : activity.report_photos;
+                    if (Array.isArray(photos) && photos.length > 0) {
+                        previewImage = photos[0];
+                    }
+                } catch (e) {
+                    console.log('Error parsing photos:', e);
+                }
+            }
+            
+            // Fallback to cover_photo if available
+            if (!previewImage && activity.cover_photo) {
+                previewImage = activity.cover_photo;
+            }
+            
+            return `
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
+                    <div class="card shadow-sm border-0 h-100">
+                        ${previewImage ? `
+                            <div class="position-relative">
+                                <img src="/uploads/activity-photos/${encodeURIComponent(previewImage)}" 
+                                     class="card-img-top w-100" 
+                                     alt="${activity.title}"
+                                     style="height: 250px; object-fit: cover;"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            </div>
+                        ` : ''}
+                        
+                        ${!previewImage ? `
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                                <i class="fas fa-image text-muted" style="font-size: 3rem; opacity: 0.5;"></i>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <small class="text-muted">${formatDate(activity.activity_date)}</small>
+                            </div>
+                            
+                            <h4 class="card-title">${activity.title}</h4>
+                            <p class="card-text">${descriptionText ? 
+                                descriptionText.substring(0, 150) + (descriptionText.length > 150 ? '...' : '') : 
+                                'Açıklama bulunmuyor.'}</p>
+                            
+                            <div class="mt-3">
+                                ${activity.region ? `
+                                    <span class="badge bg-light text-dark me-2 mb-2 activity-meta">
+                                        <i class="fas fa-map-marker-alt me-1"></i>${activity.region}
+                                    </span>
+                                ` : ''}
+                                
+                                ${activity.route ? `
+                                    <span class="badge bg-light text-dark me-2 mb-2 activity-meta">
+                                        <i class="fas fa-route me-1"></i>${activity.route}
+                                    </span>
+                                ` : ''}
+                                
+                                
+                                
+                                ${activity.weather_conditions ? `
+                                    <span class="badge bg-light text-dark me-2 mb-2 activity-meta">
+                                        <i class="fas fa-cloud-sun me-1"></i>${activity.weather_conditions}
+                                    </span>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="mt-auto pt-3">
+                                <a href="/faaliyet-detay.html?id=${activity.id}" class="btn btn-outline-success w-100">
+                                    <i class="fas fa-eye me-2"></i>Detayları Görüntüle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Get activity type info
+        function getActivityTypeInfo(type) {
+            const types = {
+                'climbing': { class: 'bg-success', text: 'Tırmanış' },
+                'hiking': { class: 'bg-primary', text: 'Yürüyüş' },
+                'camping': { class: 'bg-info', text: 'Kamp' },
+                'workshop': { class: 'bg-warning', text: 'Atölye' },
+                'course': { class: 'bg-secondary', text: 'Kurs' }
+            };
+            return types[type] || { class: 'bg-secondary', text: type || 'Diğer' };
+        }
+
+        // Get difficulty info
+        function getDifficultyInfo(level) {
+            const levels = {
+                'beginner': 'Başlangıç',
+                'intermediate': 'Orta',
+                'advanced': 'İleri',
+                'expert': 'Expert'
+            };
+            return levels[level] || level;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) return 'Tarih belirtilmemiş';
+            const dateObj = typeof dateString === 'string' ? new Date(dateString) : dateString;
+            if (Number.isNaN(dateObj.getTime())) return 'Tarih belirtilmemiş';
+            return dateObj.toLocaleDateString('tr-TR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        
+
+        // Show activity details
+        async function showActivityDetails(activityId) {
+            try {
+                const response = await fetch(`/api/activities/${activityId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const activity = result.data;
+                    const modalTitle = document.getElementById('activityModalTitle');
+                    const modalBody = document.getElementById('activityModalBody');
+                    
+                    modalTitle.textContent = activity.title;
+                    modalBody.innerHTML = createActivityDetailHTML(activity);
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('activityModal'));
+                    modal.show();
+                } else {
+                    throw new Error(result.message || 'Faaliyet detayları yüklenemedi');
+                }
+            } catch (error) {
+                alert('Faaliyet detayları yüklenirken bir hata oluştu: ' + error.message);
+            }
+        }
+
+        // Create activity detail HTML
+        function createActivityDetailHTML(activity) {
+            const typeInfo = getActivityTypeInfo(activity.type);
+            const difficultyInfo = getDifficultyInfo(activity.difficulty_level);
+            const descriptionText = activity.report_description || activity.pre_activity_description || activity.description || '';
+            
+            return `
+                <div class="activity-detail">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <span class="badge ${typeInfo.class} fs-6">${typeInfo.text}</span>
+                            ${activity.status ? `<span class="badge bg-secondary ms-2">${activity.status}</span>` : ''}
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <strong>${formatDate(activity.activity_date)}</strong>
+                        </div>
+                    </div>
+                    
+                    ${descriptionText ? `
+                        <div class="mb-3">
+                            <h6><i class="fas fa-info-circle me-2"></i>Açıklama</h6>
+                            <p>${descriptionText}</p>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="row">
+                        ${activity.location ? `
+                            <div class="col-md-6 mb-2">
+                                <strong><i class="fas fa-map-marker-alt me-2"></i>Lokasyon:</strong>
+                                <br>${activity.location}
+                            </div>
+                        ` : ''}
+                        
+                        ${difficultyInfo ? `
+                            <div class="col-md-6 mb-2">
+                                <strong><i class="fas fa-signal me-2"></i>Zorluk Seviyesi:</strong>
+                                <br>${difficultyInfo}
+                            </div>
+                        ` : ''}
+                        
+                        ${activity.max_participants ? `
+                            <div class="col-md-6 mb-2">
+                                <strong><i class="fas fa-users me-2"></i>Katılımcı:</strong>
+                                <br>${activity.current_participants || 0}/${activity.max_participants}
+                            </div>
+                        ` : ''}
+                        
+                        ${activity.price ? `
+                            <div class="col-md-6 mb-2">
+                                <strong><i class="fas fa-lira-sign me-2"></i>Ücret:</strong>
+                                <br>${activity.price} TL
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update activity count
+        function updateActivityCount(count) {
+            document.getElementById('totalActivities').textContent = count;
+        }
+
+        // Show/hide states
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'flex';
+            document.getElementById('activitiesContainer').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+        }
+
+        function showEmptyState() {
+            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('activitiesContainer').style.display = 'none';
+        }
+
+        function hideEmptyState() {
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        function showErrorState() {
+            document.getElementById('errorState').style.display = 'block';
+            document.getElementById('activitiesContainer').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+        }
+    </script>
+</body>
+</html> 

@@ -8,7 +8,7 @@ const dbConfig = {
     database: process.env.DB_NAME || 'Huddosk',
     port: process.env.DB_PORT || 3306,
     charset: 'utf8mb4',
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+    ssl: { rejectUnauthorized: true }
 };
 
 // Connection pool oluştur

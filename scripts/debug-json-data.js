@@ -1,9 +1,10 @@
+require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: 'timsah67.',
+    password: process.env.DB_PASSWORD || '',
     database: 'Huddosk',
     port: 3306,
     charset: 'utf8mb4'

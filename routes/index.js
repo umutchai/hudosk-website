@@ -86,6 +86,9 @@ router.delete('/api/education/programs/:id', requireAuth, requireAdmin, Educatio
 
 // About/Tüzük Routes
 router.get('/biz-kimiz', (req, res) => res.redirect(301, '/tuzuk'));
+router.get('/hakkimizda', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public', 'hakkimizda.html'));
+});
 router.get('/tuzuk', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'tuzuk.html'));
 });

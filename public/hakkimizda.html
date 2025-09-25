@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hakkımızda - HÜDDOSK</title>
+    <link rel="icon" href="/favicon.jpg" type="image/jpeg">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Hakkımızda sayfası özel stilleri */
+        .about-hero {
+            background: linear-gradient(135deg, #704ca3 0%, #8b6bc0 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .content-card {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .huddosk-image {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            margin-bottom: 2rem;
+        }
+        
+        .timeline-item {
+            border-left: 3px solid #704ca3;
+            padding-left: 20px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #704ca3;
+        }
+        
+        .year-badge {
+            background: linear-gradient(135deg, #704ca3, #5f3f8a);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .huddosk-image {
+                border-radius: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4" href="/">
+                <img src="/images/HuddoskLogo_page-0001.jpg" alt="HÜDDOSK" style="height: 36px; width: auto; border-radius: 4px;" />
+                <span>HÜDDOSK</span>
+                <span class="d-none d-lg-inline ms-2 fw-normal" style="font-size: 0.9rem;">Hacettepe Üniversitesi Dağcılık ve Doğa Sporları Kulübü</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>Ana Sayfa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/hakkimizda">
+                            <i class="fas fa-users me-1"></i>Hakkımızda
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/faaliyet-raporlari">
+                            <i class="fas fa-clipboard-list me-1"></i>Faaliyet Raporları
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/egitim-programlari">
+                            <i class="fas fa-graduation-cap me-1"></i>HÜDDOSK Eğitim Planı
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tuzuk">
+                            <i class="fas fa-file-alt me-1"></i>Tüzük
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="container text-center text-white">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-3 fw-bold mb-4 animate-fadeIn">
+                        <i class="fas fa-users me-3"></i>Hakkımızda
+                    </h1>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ana İçerik Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <!-- İlk Görsel -->
+                    <div class="text-center mb-5">
+                        <img src="/huddosk1.jpg" alt="HÜDDOSK Faaliyetleri" class="huddosk-image">
+                    </div>
+                    
+                    <div class="content-card p-5 mb-5">
+                        <div class="text-center mb-5">
+                            <h2 class="display-5 fw-bold text-success mb-4">HÜDDOSK</h2>
+                            <p class="lead text-muted">Hacettepe Üniversitesi Dağcılık ve Doğa Sporları Kulübü</p>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <p class="fs-5 lh-lg text-justify mb-4">
+                                    Hacettepe Üniversitesi Dağcılık ve Doğa Sporları Kulübü (HÜDDOSK), <strong>1976 yılından bu yana</strong> Türkiye dağcılığına öncülük eden köklü bir öğrenci topluluğudur. Kurucularımız <strong>Tanju Sofu</strong> ve ekibi, Demirkazık kuzey duvarında yaptıkları ilk rota denemeleriyle; <strong>Mete Aygün</strong> ve <strong>Recep Çatak</strong> ise Katırkayası'ndaki duvar tırmanışlarıyla, Aladağlar'dan Ağrı'ya, Kaçkar'dan Cilo'ya uzanan sayısız zirveyle kulübün ruhunu şekillendirdiler.
+                                </p>
+                                
+                                <p class="fs-5 lh-lg text-justify mb-4">
+                                    HÜDDOSK'ta <strong>dağlar, dostlukların kurulduğu ve dayanışmanın, sabrın öğrenildiği yerlerdir.</strong> 1981'de Erciyes'de açılan <em>Nesrin Topkapı kulvarı</em>, 1986'da <em>Demirkazık Batı Rotası</em> ve <em>Küçük Demirkazık'ın ilk kış çıkışı</em>, 1991'de <em>Parmakkaya</em> ve <em>Kaldı'nın solo kış çıkışları</em> gibi pek çok ilk, kulüp tarihimize damgasını vurmuştur.
+                                </p>
+                                
+                                <div class="bg-light p-4 rounded-3 mb-4">
+                                    <h4 class="text-success mb-3"><i class="fas fa-bullseye me-2"></i>Misyonumuz</h4>
+                                    <p class="fs-5 lh-lg mb-0">
+                                        Yalnızca iyi tırmanıcılar yetiştirmek değil; <strong>dağcılığa ve çevresine faydalı, doğayı seven bireyler yetiştirmektir.</strong> HÜDDOSK üyleleri, doğayı korumayı her zaman dağcılığın önüne koymuştur.
+                                    </p>
+                                </div>
+                                
+                                <div class="text-center p-4 bg-success text-white rounded-3 mb-4">
+                                    <h3 class="mb-3"><i class="fas fa-quote-left me-2"></i>"Az konuş, çok tırman"</h3>
+                                    <p class="fs-5 mb-0">
+                                        Felsefemizle; yüksek irtifa tırmanışlarından kaya duvarlarına, kış faaliyetlerinden doğa yürüyüşlerine kadar pek çok alanda hem kendimizi hem kulübümüzü geliştirmeye devam ediyoruz.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- İkinci Görsel -->
+                    <div class="text-center mb-5">
+                        <img src="/huddosk2.jpg" alt="HÜDDOSK Tırmanış Faaliyetleri" class="huddosk-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tarihçe Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="text-center mb-5">
+                        <h2 class="display-6 fw-bold text-success mb-3">
+                            <i class="fas fa-history me-3"></i>Tarihçemizden İzler
+                        </h2>
+                        <p class="lead text-muted">Kulübümüzün önemli dönüm noktaları</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-6 mb-4">
+                            <div class="timeline-item">
+                                <span class="year-badge">1976</span>
+                                <h5 class="fw-bold">Kuruluş</h5>
+                                <p>HÜDDOSK'un kuruluşu. Tanju Sofu ve ekibi ile başlayan serüven.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-4">
+                            <div class="timeline-item">
+                                <span class="year-badge">1981</span>
+                                <h5 class="fw-bold">Nesrin Topkapı Kulvarı</h5>
+                                <p>Erciyes'de açılan Nesrin Topkapı kulvarı ile tırmanış tarihimize yeni sayfa.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-4">
+                            <div class="timeline-item">
+                                <span class="year-badge">1986</span>
+                                <h5 class="fw-bold">Demirkazık Batı Rotası</h5>
+                                <p>Demirkazık Batı Rotası ve Küçük Demirkazık'ın ilk kış çıkışı gerçekleştirildi.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-4">
+                            <div class="timeline-item">
+                                <span class="year-badge">1991</span>
+                                <h5 class="fw-bold">Solo Kış Çıkışları</h5>
+                                <p>Parmakkaya ve Kaldı'nın solo kış çıkışları ile yeni bir dönem.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- İletişim Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- Üçüncü Görsel -->
+                    <div class="text-center mb-5">
+                        <img src="/huddosk3.jpg" alt="HÜDDOSK Doğa Sporları" class="huddosk-image">
+                    </div>
+                    
+                    <div class="content-card p-5 text-center">
+                        <h2 class="display-6 fw-bold text-success mb-4">
+                            <i class="fas fa-envelope me-3"></i>İletişim
+                        </h2>
+                        <p class="lead text-muted mb-4">
+                            Bizimle iletişime geçmek için aşağıdaki e-posta adresini kullanabilirsiniz.
+                        </p>
+                        <div class="d-flex justify-content-center align-items-center gap-3 p-4 bg-light rounded-3">
+                            <i class="fas fa-envelope text-success fs-3"></i>
+                            <div>
+                                <h5 class="mb-1">E-posta</h5>
+                                <a href="mailto:huddoskiletisim@gmail.com" class="text-success fs-5 fw-bold text-decoration-none">
+                                    huddoskiletisim@gmail.com
+                                </a>
+                            </div>
+                        </div>
+                        
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="mb-3 d-flex align-items-center justify-content-center gap-2">
+                        <img src="/images/HuddoskLogo_page-0001.jpg" alt="HÜDDOSK" style="height: 28px; width: auto; border-radius: 4px;" />
+                        <span>HÜDDOSK</span>
+                    </h5>
+                    <p class="mb-2">Doğa Sporları ve Tırmanış Topluluğu</p>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/huddosk/" target="_blank" rel="noopener noreferrer" class="text-white me-3">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <p class="small text-white-50 mt-3 mb-0">Huddosk'ta yayımlanan içerikler yalnızca kişisel kullanım amacıyla paylaşılabilir; ticari yayın organlarında izinsiz kullanımı yasaktır. İçeriklerin uygulanmasından doğabilecek risk ve zararlardan Huddosk sorumlu değildir.</p>
+                    <hr class="my-3">
+                    <p class="mb-0">&copy; 2025 HÜDDOSK. Tüm hakları saklıdır.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="/js/script.js"></script>
+</body>
+</html>

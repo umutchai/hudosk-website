@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 async function testDatabase() {
@@ -7,7 +8,7 @@ async function testDatabase() {
         const connection = await mysql.createConnection({
             host: 'localhost',
             user: 'root',
-            password: 'timsah67.',
+            password: process.env.DB_PASSWORD || '',
             database: 'Huddosk',
             port: 3306
         });

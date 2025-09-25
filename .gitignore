@@ -67,3 +67,16 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+# Additional security files
+*.key
+*.pem
+*.p12
+*.pfx
+passwords.txt
+secrets.txt
+config/database.js.backup
+
+# Database files
+*.db
+*.sqlite
+*.sql.backup

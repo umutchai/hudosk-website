@@ -14,6 +14,11 @@ const { testConnection, createTables } = require('./config/database');
 // Import routes
 const routes = require('./routes/index');
 
+// Trust proxy (Railway, production)
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+}
+
 // Session configuration
 app.use(session({
     secret: process.env.SESSION_SECRET || 'hudosk-session-secret-2024',
@@ -21,6 +26,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     }
 }));

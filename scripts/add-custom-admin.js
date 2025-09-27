@@ -46,6 +46,20 @@ const role = 'admin';
     console.log(`  Email   : ${email}`);
     console.log(`  Username: ${username}`);
     console.log(`  Role    : ${role}`);
+
+    // Activities tablosuna cover_photo kolonu ekle (eksikse)
+    const [coverPhotoCol] = await connection.execute(`
+      SHOW COLUMNS FROM activities LIKE 'cover_photo'
+    `);
+
+    if (coverPhotoCol.length === 0) {
+      await connection.execute(`
+        ALTER TABLE activities 
+        ADD COLUMN cover_photo VARCHAR(500) NULL AFTER title
+      `);
+      console.log('✅ Activities tablosuna cover_photo kolonu eklendi');
+    }
+
   } catch (err) {
     console.error('Failed to create admin user:', err.message);
   } finally {

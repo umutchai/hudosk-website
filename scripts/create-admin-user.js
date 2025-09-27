@@ -1,70 +1,47 @@
 const { pool } = require('../config/database');
 const bcrypt = require('bcryptjs');
 
-async function createAdminUser() {
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'ucumutcay@gmail.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ikisogukbiramvarabi6';
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || ADMIN_EMAIL;
+const ADMIN_ROLE = process.env.ADMIN_ROLE || 'admin';
+
+(async function createAdminUser() {
+    let connection;
     try {
-        const connection = await pool.getConnection();
-        
-        console.log('🔄 Admin kullanıcısı oluşturuluyor...');
-        
-        // Önce users tablosunun var olup olmadığını kontrol et
-        const [tables] = await connection.execute(`
-            SHOW TABLES LIKE 'users'
-        `);
-        
-        if (tables.length === 0) {
-            console.log('📋 Users tablosu bulunamadı, oluşturuluyor...');
-            
-            await connection.execute(`
-                CREATE TABLE users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    username VARCHAR(50) UNIQUE NOT NULL,
-                    email VARCHAR(100) UNIQUE NOT NULL,
-                    password VARCHAR(255) NOT NULL,
-                    role ENUM('admin', 'editor', 'user') DEFAULT 'user',
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-            `);
-            
-            console.log('✅ Users tablosu oluşturuldu!');
-        }
-        
-        // Admin kullanıcısının var olup olmadığını kontrol et
-        const [existingUsers] = await connection.execute(`
-            SELECT * FROM users WHERE username = 'admin' OR email = 'admin@hudosk.com'
-        `);
-        
-        if (existingUsers.length > 0) {
-            console.log('ℹ️ Admin kullanıcısı zaten mevcut!');
-            console.log('📧 Email: admin@hudosk.com');
-            console.log('🔑 Şifre: admin123');
-            connection.release();
-            return;
-        }
-        
-        // Şifreyi hashle
-        const hashedPassword = await bcrypt.hash('admin123', 10);
-        
-        // Admin kullanıcısını oluştur
-        await connection.execute(`
-            INSERT INTO users (username, email, password, role) 
+        connection = await pool.getConnection();
+        console.log('Admin kullan�c�s� olu�turma i�lemi ba�lad�...');
+
+        await connection.execute(
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                role ENUM('admin', 'editor', 'user') DEFAULT 'user',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        );
+
+        const hashedPassword = await bcrypt.hash(ADMIN_PASSWORD, 10);
+
+        await connection.execute(
+            INSERT INTO users (username, email, password, role)
             VALUES (?, ?, ?, ?)
-        `, ['admin', 'admin@hudosk.com', hashedPassword, 'admin']);
-        
-        console.log('✅ Admin kullanıcısı başarıyla oluşturuldu!');
-        console.log('📧 Email: admin@hudosk.com');
-        console.log('🔑 Şifre: admin123');
-        console.log('🔐 Role: admin');
-        
-        connection.release();
-        
+            ON DUPLICATE KEY UPDATE
+                password = VALUES(password),
+                role = VALUES(role)
+        , [ADMIN_USERNAME, ADMIN_EMAIL, hashedPassword, ADMIN_ROLE]);
+
+        console.log('Admin kullan�c�s� haz�r:');
+        console.log(  Email   : );
+        console.log(  Username: );
+        console.log(  Role    : );
     } catch (error) {
-        console.error('❌ Hata:', error.message);
+        console.error('Hata:', error.message);
     } finally {
+        if (connection) connection.release();
         process.exit(0);
     }
-}
-
-// Scripti çalıştır
-createAdminUser(); 
+})();

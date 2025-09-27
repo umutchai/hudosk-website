@@ -8,7 +8,10 @@ const dbConfig = {
     database: process.env.DB_NAME || 'Huddosk',
     port: process.env.DB_PORT || 3306,
     charset: 'utf8mb4',
-    ssl: { rejectUnauthorized: true }
+    ssl: {
+        rejectUnauthorized: true,
+        ca: process.env.DB_SSL_CERT ? Buffer.from(process.env.DB_SSL_CERT, 'base64').toString('utf-8') : undefined
+    }
 };
 
 // Connection pool oluştur
@@ -153,6 +156,7 @@ async function createTables() {
             CREATE TABLE IF NOT EXISTS activity_reports (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 title VARCHAR(255) NOT NULL COMMENT 'Faaliyet raporu başlığı',
+                description TEXT COMMENT 'Faaliyet raporu özeti',
                 content LONGTEXT COMMENT 'Rich Text Editor ile oluşturulan içerik',
                 location VARCHAR(255) COMMENT 'Faaliyet konumu',
                 activity_date DATE COMMENT 'Faaliyet tarihi',
@@ -171,6 +175,19 @@ async function createTables() {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
         `);
+
+        // Eksik description kolonu varsa ekle
+        const [descriptionColumn] = await connection.execute(`
+            SHOW COLUMNS FROM activity_reports LIKE 'description'
+        `);
+
+        if (descriptionColumn.length === 0) {
+            await connection.execute(`
+                ALTER TABLE activity_reports
+                ADD COLUMN description TEXT NULL AFTER title
+            `);
+            console.log('🛠️  activity_reports tablosuna description kolonu eklendi.');
+        }
 
         connection.release();
         console.log('✅ Veritabanı tabloları başarıyla oluşturuldu!');

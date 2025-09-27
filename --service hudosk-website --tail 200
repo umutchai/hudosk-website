@@ -1,0 +1,114 @@
+warning: in the working copy of 'scripts/create-admin-user.js', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/scripts/create-admin-user.js b/scripts/create-admin-user.js[m
+[1mindex c1e84ef..2c6444f 100644[m
+[1m--- a/scripts/create-admin-user.js[m
+[1m+++ b/scripts/create-admin-user.js[m
+[36m@@ -1,70 +1,47 @@[m
+ const { pool } = require('../config/database');[m
+ const bcrypt = require('bcryptjs');[m
+ [m
+[31m-async function createAdminUser() {[m
+[32m+[m[32mconst ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'ucumutcay@gmail.com';[m
+[32m+[m[32mconst ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ikisogukbiramvarabi6';[m
+[32m+[m[32mconst ADMIN_USERNAME = process.env.ADMIN_USERNAME || ADMIN_EMAIL;[m
+[32m+[m[32mconst ADMIN_ROLE = process.env.ADMIN_ROLE || 'admin';[m
+[32m+[m
+[32m+[m[32m(async function createAdminUser() {[m
+[32m+[m[32m    let connection;[m
+     try {[m
+[31m-        const connection = await pool.getConnection();[m
+[31m-        [m
+[31m-        console.log('🔄 Admin kullanıcısı oluşturuluyor...');[m
+[31m-        [m
+[31m-        // Önce users tablosunun var olup olmadığını kontrol et[m
+[31m-        const [tables] = await connection.execute(`[m
+[31m-            SHOW TABLES LIKE 'users'[m
+[31m-        `);[m
+[31m-        [m
+[31m-        if (tables.length === 0) {[m
+[31m-            console.log('📋 Users tablosu bulunamadı, oluşturuluyor...');[m
+[31m-            [m
+[31m-            await connection.execute(`[m
+[31m-                CREATE TABLE users ([m
+[31m-                    id INT AUTO_INCREMENT PRIMARY KEY,[m
+[31m-                    username VARCHAR(50) UNIQUE NOT NULL,[m
+[31m-                    email VARCHAR(100) UNIQUE NOT NULL,[m
+[31m-                    password VARCHAR(255) NOT NULL,[m
+[31m-                    role ENUM('admin', 'editor', 'user') DEFAULT 'user',[m
+[31m-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,[m
+[31m-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP[m
+[31m-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci[m
+[31m-            `);[m
+[31m-            [m
+[31m-            console.log('✅ Users tablosu oluşturuldu!');[m
+[31m-        }[m
+[31m-        [m
+[31m-        // Admin kullanıcısının var olup olmadığını kontrol et[m
+[31m-        const [existingUsers] = await connection.execute(`[m
+[31m-            SELECT * FROM users WHERE username = 'admin' OR email = 'admin@hudosk.com'[m
+[31m-        `);[m
+[31m-        [m
+[31m-        if (existingUsers.length > 0) {[m
+[31m-            console.log('ℹ️ Admin kullanıcısı zaten mevcut!');[m
+[31m-            console.log('📧 Email: admin@hudosk.com');[m
+[31m-            console.log('🔑 Şifre: admin123');[m
+[31m-            connection.release();[m
+[31m-            return;[m
+[31m-        }[m
+[31m-        [m
+[31m-        // Şifreyi hashle[m
+[31m-        const hashedPassword = await bcrypt.hash('admin123', 10);[m
+[31m-        [m
+[31m-        // Admin kullanıcısını oluştur[m
+[31m-        await connection.execute(`[m
+[31m-            INSERT INTO users (username, email, password, role) [m
+[32m+[m[32m        connection = await pool.getConnection();[m
+[32m+[m[32m        console.log('Admin kullan�c�s� olu�turma i�lemi ba�lad�...');[m
+[32m+[m
+[32m+[m[32m        await connection.execute([m
+[32m+[m[32m            CREATE TABLE IF NOT EXISTS users ([m
+[32m+[m[32m                id INT AUTO_INCREMENT PRIMARY KEY,[m
+[32m+[m[32m                username VARCHAR(50) UNIQUE NOT NULL,[m
+[32m+[m[32m                email VARCHAR(100) UNIQUE NOT NULL,[m
+[32m+[m[32m                password VARCHAR(255) NOT NULL,[m
+[32m+[m[32m                role ENUM('admin', 'editor', 'user') DEFAULT 'user',[m
+[32m+[m[32m                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,[m
+[32m+[m[32m                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP[m
+[32m+[m[32m            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci[m
+[32m+[m[32m        );[m
+[32m+[m
+[32m+[m[32m        const hashedPassword = await bcrypt.hash(ADMIN_PASSWORD, 10);[m
+[32m+[m
+[32m+[m[32m        await connection.execute([m
+[32m+[m[32m            INSERT INTO users (username, email, password, role)[m
+             VALUES (?, ?, ?, ?)[m
+[31m-        `, ['admin', 'admin@hudosk.com', hashedPassword, 'admin']);[m
+[31m-        [m
+[31m-        console.log('✅ Admin kullanıcısı başarıyla oluşturuldu!');[m
+[31m-        console.log('📧 Email: admin@hudosk.com');[m
+[31m-        console.log('🔑 Şifre: admin123');[m
+[31m-        console.log('🔐 Role: admin');[m
+[31m-        [m
+[31m-        connection.release();[m
+[31m-        [m
+[32m+[m[32m            ON DUPLICATE KEY UPDATE[m
+[32m+[m[32m                password = VALUES(password),[m
+[32m+[m[32m                role = VALUES(role)[m
+[32m+[m[32m        , [ADMIN_USERNAME, ADMIN_EMAIL, hashedPassword, ADMIN_ROLE]);[m
+[32m+[m
+[32m+[m[32m        console.log('Admin kullan�c�s� haz�r:');[m
+[32m+[m[32m        console.log(  Email   : );[m
+[32m+[m[32m        console.log(  Username: );[m
+[32m+[m[32m        console.log(  Role    : );[m
+     } catch (error) {[m
+[31m-        console.error('❌ Hata:', error.message);[m
+[32m+[m[32m        console.error('Hata:', error.message);[m
+     } finally {[m
+[32m+[m[32m        if (connection) connection.release();[m
+         process.exit(0);[m
+     }[m
+[31m-}[m
+[31m-[m
+[31m-// Scripti çalıştır[m
+[31m-createAdminUser(); [m
+[32m+[m[32m})();[m
